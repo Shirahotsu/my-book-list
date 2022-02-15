@@ -3,7 +3,7 @@
  * https://reactnavigation.org/docs/getting-started
  *
  */
-import {FontAwesome} from '@expo/vector-icons';
+import {FontAwesome5} from '@expo/vector-icons';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer, DefaultTheme, DarkTheme} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -14,8 +14,11 @@ import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
-import TabOneScreen from '../screens/TabOneScreen';
-import TabTwoScreen from '../screens/TabTwoScreen';
+import MyList from '../screens/MyList';
+import Top from '../screens/Top';
+import Search from '../screens/Search'
+import Profile from "../screens/Profile";
+import Settings from "../screens/Settings";
 import {RootStackParamList, RootTabParamList, RootTabScreenProps} from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
 
@@ -64,41 +67,41 @@ function BottomTabNavigator() {
             }}>
             <BottomTab.Screen
                 name="MyList"
-                component={TabTwoScreen}
+                component={MyList}
                 options={{
-                    tabBarIcon: ({color}) => <TabBarIcon name="book" color={color}/>,
+                    tabBarIcon: ({color}) => <TabBarIcon name="book-open" color={color}/>,
                     tabBarShowLabel: false
                 }}
             />
             <BottomTab.Screen
                 name="Top"
-                component={TabTwoScreen}
+                component={Top}
                 options={{
-                    tabBarIcon: ({color}) => <TabBarIcon name="code" color={color}/>,
+                    tabBarIcon: ({color}) => <TabBarIcon name="hotjar" color={color}/>,
                     tabBarShowLabel: false
                 }}
             />
             <BottomTab.Screen
                 name="Search"
-                component={TabTwoScreen}
+                component={Search}
                 options={{
-                    tabBarIcon: ({color}) => <TabBarIcon name="code" color={color}/>,
+                    tabBarIcon: ({color}) => <TabBarIcon name="search" color={color}/>,
                     tabBarShowLabel: false
                 }}
             />
             <BottomTab.Screen
                 name="Profile"
-                component={TabTwoScreen}
+                component={Profile}
                 options={{
-                    tabBarIcon: ({color}) => <TabBarIcon name="code" color={color}/>,
+                    tabBarIcon: ({color}) => <TabBarIcon name="user" color={color}/>,
                     tabBarShowLabel: false
                 }}
             />
             <BottomTab.Screen
                 name="Settings"
-                component={TabTwoScreen}
+                component={Settings}
                 options={{
-                    tabBarIcon: ({color}) => <TabBarIcon name="code" color={color}/>,
+                    tabBarIcon: ({color}) => <TabBarIcon name="cog" color={color}/>,
                     tabBarShowLabel: false
                 }}
             />
@@ -110,8 +113,8 @@ function BottomTabNavigator() {
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
  */
 function TabBarIcon(props: {
-    name: React.ComponentProps<typeof FontAwesome>['name'];
+    name: React.ComponentProps<typeof FontAwesome5>['name'];
     color: string;
 }) {
-    return <FontAwesome size={30}  {...props} />;
+    return <FontAwesome5 size={30}  {...props} />;
 }

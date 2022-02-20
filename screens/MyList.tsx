@@ -3,13 +3,12 @@ import { StyleSheet } from 'react-native';
 import EditScreenInfo from '../components/EditScreenInfo';
 import { Text, View } from '../components/Themed';
 import { RootTabScreenProps } from '../types';
+import BookItem from "../components/BookItem";
 
 export default function MyList({ navigation }: RootTabScreenProps<'MyList'>) {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>MyList</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="/screens/MyList.tsx" />
+      <BookItem/>
     </View>
   );
 }

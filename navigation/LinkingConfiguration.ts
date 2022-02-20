@@ -17,27 +17,26 @@ const linking: LinkingOptions<RootStackParamList> = {
         screens: {
           MyList:{
             screens: {
-              TabOneScreen: 'one',
             },
           },
           Top:{
             screens: {
-              TabOneScreen: 'one',
+              TabOneScreen: 'Top',
             },
           },
           Search:{
             screens: {
-              TabOneScreen: 'one',
+              TabOneScreen: 'Search',
             },
           },
           Profile:{
             screens: {
-              TabOneScreen: 'one',
+              TabOneScreen: 'Profile',
             },
           },
           Settings:{
             screens: {
-              TabOneScreen: 'one',
+              TabOneScreen: 'Settings',
             },
           }
         },

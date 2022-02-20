@@ -1,9 +1,8 @@
 import { StyleSheet } from 'react-native';
 
 import { Text, View } from '../components/Themed';
-import { RootTabScreenProps } from '../types';
 
-export default function Profile({ navigation }: RootTabScreenProps<'Profile'>) {
+export default function Profile() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Profile</Text>

@@ -1,31 +1,54 @@
-import { StyleSheet } from 'react-native';
+import {SafeAreaView, ScrollView, StyleSheet} from 'react-native';
 
 import EditScreenInfo from '../components/EditScreenInfo';
-import { Text, View } from '../components/Themed';
-import { RootTabScreenProps } from '../types';
-import BookItem from "../components/BookItem";
+import {Text, View} from '../components/Themed';
+import Spacing from '../constants/Spacing'
+import {RootTabScreenProps} from '../types';
+import BookItem from "../components/BookItem/BookItem";
+import React from 'react';
+import BookItemProps from "../models/BookItemProps";
 
-export default function MyList({ navigation }: RootTabScreenProps<'MyList'>) {
-  return (
-    <View style={styles.container}>
-      <BookItem/>
-    </View>
-  );
+export default function MyList({navigation}: RootTabScreenProps<'MyList'>) {
+    return (
+        <SafeAreaView style={s.container}>
+            <ScrollView style={s.scroll}>
+                {
+                    data1.map(d=>
+                        <View style={s.item}>
+                            <BookItem isFromMyBookList={true} title={d.title} pagesRead={d.pagesRead} maxPages={d.maxPages} score={d.score}/>
+                        </View>
+                    )
+                }
+
+            </ScrollView>
+        </SafeAreaView>
+    );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
-  },
+const data1:BookItemProps[] = [
+    {
+        title:'Super pierwszy tytuł nwm jaki dokladnaie',
+        pagesRead: 12,
+        maxPages: 120,
+        score: 7
+    }
+]
+
+const s = StyleSheet.create({
+    container: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    scroll: {
+        flex: 1,
+        width: '100%',
+    },
+    title: {
+        fontSize: 20,
+        fontWeight: 'bold',
+    },
+    item: {
+        marginVertical: Spacing.sm,
+    },
 });

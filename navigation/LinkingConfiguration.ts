@@ -19,9 +19,10 @@ const linking: LinkingOptions<RootStackParamList> = {
             screens: {
             },
           },
-          Top:{
+          TopStack:{
             screens: {
-              TabOneScreen: 'Top',
+              Top:'Top',
+              Details: 'Details',
             },
           },
           Search:{

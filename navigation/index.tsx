@@ -51,6 +51,19 @@ function RootNavigator() {
  * A bottom tab navigator displays tab buttons on the bottom of the display to switch screens.
  * https://reactnavigation.org/docs/bottom-tab-navigator
  */
+
+const TopStack = createNativeStackNavigator();
+
+
+function TopStackScreen({navigation}:any) {
+    return (
+        <TopStack.Navigator initialRouteName="Top">
+            <TopStack.Screen name="Top" component={Top} />
+            <TopStack.Screen  name="Details" component={ModalScreen} />
+        </TopStack.Navigator>
+    );
+}
+
 const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
 function BottomTabNavigator() {
@@ -72,11 +85,13 @@ function BottomTabNavigator() {
                 }}
             />
             <BottomTab.Screen
-                name="Top"
-                component={Top}
+                name="TopStack"
+                component={TopStackScreen}
                 options={{
+                    unmountOnBlur:true,
                     tabBarIcon: ({color}) => <TabBarIcon name="hotjar" color={color}/>,
-                    tabBarShowLabel: false
+                    tabBarShowLabel: false,
+                    headerShown: false
                 }}
             />
             <BottomTab.Screen

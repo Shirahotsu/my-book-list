@@ -1,4 +1,4 @@
-import {SafeAreaView, ScrollView, StyleSheet} from 'react-native';
+import {SafeAreaView, ScrollView, StyleSheet, TouchableHighlight} from 'react-native';
 
 import { Text, View } from '../components/Themed';
 import BookItem from "../components/BookItem/BookItem";
@@ -6,14 +6,16 @@ import React from "react";
 import Spacing from "../constants/Spacing";
 import BookItemProps from "../models/BookItemProps";
 
-export default function Top() {
+export default function Top({navigation}: any) {
   return (
       <SafeAreaView style={s.container}>
         <ScrollView style={s.scroll}>
           {
             data2.map((d, i)=>
-                <View key={i} style={s.item}>
-                  <BookItem isFromMyBookList={false} title={d.title} booksRead={d.booksRead} score={d.score} number={d.number}/>
+                <View key={i} style={s.item} >
+                  <TouchableHighlight onPress={()=>navigation.push('Details')}>
+                   <BookItem isFromMyBookList={false} title={d.title} booksRead={d.booksRead} score={d.score} number={d.number}/>
+                  </TouchableHighlight>
                 </View>
             )
           }

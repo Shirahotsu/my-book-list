@@ -26,13 +26,27 @@ export type RootStackScreenProps<Screen extends keyof RootStackParamList> = Nati
 
 export type RootTabParamList = {
   MyList: undefined;
-  Top: undefined;
+  TopStack:NavigatorScreenParams<TopStack> | undefined
   Search: undefined;
   Profile: undefined;
   Settings: undefined;
+};
+
+export type TopStack= {
+  Top:undefined,
+  Details: undefined,
+}
+
+export type TopStackParamList = {
+  TopStack:NavigatorScreenParams<TopStack> | undefined
 };
 
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> = CompositeScreenProps<
   BottomTabScreenProps<RootTabParamList, Screen>,
   NativeStackScreenProps<RootStackParamList>
 >;
+
+export type TopStackScreenProps<Screen extends keyof TopStack> = CompositeScreenProps<
+    BottomTabScreenProps<TopStack, Screen>,
+    NativeStackScreenProps<RootStackParamList>
+    >;

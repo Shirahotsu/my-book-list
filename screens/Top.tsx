@@ -11,8 +11,8 @@ export default function Top() {
       <SafeAreaView style={s.container}>
         <ScrollView style={s.scroll}>
           {
-            data2.map(d=>
-                <View style={s.item}>
+            data2.map((d, i)=>
+                <View key={i} style={s.item}>
                   <BookItem isFromMyBookList={false} title={d.title} booksRead={d.booksRead} score={d.score} number={d.number}/>
                 </View>
             )

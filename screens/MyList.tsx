@@ -13,8 +13,8 @@ export default function MyList({navigation}: RootTabScreenProps<'MyList'>) {
         <SafeAreaView style={s.container}>
             <ScrollView style={s.scroll}>
                 {
-                    data1.map(d=>
-                        <View style={s.item}>
+                    data1.map((d,i)=>
+                        <View key={i} style={s.item}>
                             <BookItem isFromMyBookList={true} title={d.title} pagesRead={d.pagesRead} maxPages={d.maxPages} score={d.score}/>
                         </View>
                     )

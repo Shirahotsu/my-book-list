@@ -1,5 +1,5 @@
 const basic =  14
-const h1 = basic*1.5
+const h1 = basic*1.8
 const h2 = basic*1.5
 const h3 = basic*1.4
 const h4 = basic*1.3

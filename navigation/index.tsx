@@ -12,7 +12,7 @@ import {ColorSchemeName, Pressable} from 'react-native';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
-import ModalScreen from '../screens/ModalScreen';
+import BookDetails from '../screens/BookDetails';
 import NotFoundScreen from '../screens/NotFoundScreen';
 import MyList from '../screens/MyList';
 import Top from '../screens/Top';
@@ -59,7 +59,7 @@ function TopStackScreen({navigation}:any) {
     return (
         <TopStack.Navigator initialRouteName="Top">
             <TopStack.Screen name="Top" component={Top} />
-            <TopStack.Screen  name="Details" component={ModalScreen} />
+            <TopStack.Screen  name="Details" component={BookDetails} />
         </TopStack.Navigator>
     );
 }

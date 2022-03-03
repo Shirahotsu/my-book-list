@@ -29,13 +29,13 @@ export default function BookItem(props: BookItemProps) {
                     <Title numberOfLines={1}>{props.title}</Title>
                 </View>
                 <View>
-                    <View style={s.booNumberInfo}>
+                    <View style={s.bookNumberInfo}>
                         <View style={s.bookIcon}>
                             <FontAwesome5 size={FontSize.h4} name="star" color={Colors[colorScheme].text}/>
                         </View>
                         <Title>{score}</Title>
                     </View>
-                    <View style={s.booNumberInfo}>
+                    <View style={s.bookNumberInfo}>
                         <View style={s.bookIcon}>
                             <FontAwesome5 size={FontSize.h4} name={isFromMyBookList ? 'check-circle' : 'book-reader'}
                                           color={Colors[colorScheme].text}/>
@@ -76,7 +76,7 @@ const s = StyleSheet.create({
         marginBottom: Spacing.xs,
         fontWeight: 'bold'
     },
-    booNumberInfo: {
+    bookNumberInfo: {
         flexDirection: 'row',
         alignItems: 'center'
     },

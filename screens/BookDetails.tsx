@@ -1,7 +1,5 @@
-import {StatusBar} from 'expo-status-bar';
 import {Image, Platform, ScrollView, StyleSheet} from 'react-native';
 
-import EditScreenInfo from '../components/EditScreenInfo';
 import {Button, Text, View} from '../components/Themed';
 
 import BookDetailsInterface from "../models/BookDetails";
@@ -56,7 +54,7 @@ export default function BookDetails() {
             score: bookDetailsMock.usersScore?.score ?? 0
         }
     }
-
+    
     return (
         <ScrollView>
             <View style={s.container}>
@@ -76,6 +74,7 @@ export default function BookDetails() {
                 </View>
 
                 <View style={s.scoreContainer}>
+
                     <View>
                         <View style={s.numericInfo}>
                             <View style={s.bookIcon}>

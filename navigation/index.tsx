@@ -72,7 +72,7 @@ function BottomTabNavigator() {
     return (
         <BottomTab.Navigator
             backBehavior='history'
-            initialRouteName="MyList"
+            initialRouteName="Profile"
             screenOptions={{
                 tabBarActiveTintColor: Colors[colorScheme].tint,
             }}>

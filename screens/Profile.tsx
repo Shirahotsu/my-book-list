@@ -1,16 +1,18 @@
-import { StyleSheet } from 'react-native';
+import {ScrollView, StyleSheet} from 'react-native';
 
 import { Text, View } from '../components/Themed';
 import BasicInfo from "../components/Profile/BasicInfo";
 import Spacing from "../constants/Spacing";
+import PagesRead from "../components/Profile/PagesRead";
 
 export default function Profile() {
   return (
-    <View style={s.container}>
+    <ScrollView style={s.container}>
       <View style={s.basicInfo}>
         <BasicInfo />
+        <PagesRead/>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 

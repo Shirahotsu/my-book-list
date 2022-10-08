@@ -1,6 +1,6 @@
-import {ScrollView, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
 
-import {Button, Text, View} from '../components/Themed';
+import {Button, Text, View, ScrollView} from '../components/Themed';
 import BasicInfo from "../components/Profile/BasicInfo";
 import Spacing from "../constants/Spacing";
 import PagesRead from "../components/Profile/PagesRead";
@@ -25,9 +25,11 @@ export default function Profile() {
   return (
     <ScrollView style={s.container}>
       <View style={s.basicInfo}>
-        <Button title={'LOG OUT'} onPress={() => handleOnLogOut()}/>
         <BasicInfo />
         <PagesRead/>
+        <View style={s.logOutButton}>
+          <Button title={'Wyloguj się'} onPress={() => handleOnLogOut()}/>
+        </View>
       </View>
     </ScrollView>
   );
@@ -47,5 +49,8 @@ const s = StyleSheet.create({
   },
   basicInfo:{
     marginVertical: Spacing.xl
+  },
+  logOutButton:{
+    marginTop: Spacing.xl
   }
 });

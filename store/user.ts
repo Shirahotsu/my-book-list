@@ -28,6 +28,7 @@ class User {
         this.user.isLogged = true
         console.log('this.user',this.user)
     }
+
     removeUser(){
         this.user.accessToken = ''
         this.user.uid = ''

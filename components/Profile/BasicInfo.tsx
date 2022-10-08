@@ -1,21 +1,81 @@
 import {Image, StyleSheet} from 'react-native';
 
-import {Text, View} from '../Themed';
+import {Text, View, Button, TextInput} from '../Themed';
 import Spacing from "../../constants/Spacing";
 import FontSize from "../../constants/FontSize";
+import React, {useEffect, useState} from "react";
+import {loadProfileDetails, updateUserName} from '../../firebase/profile'
+import {profileStore} from "../../store/profile";
+import {Observer} from "mobx-react";
+import Modal from "../Modal";
 
 export default function BasicInfo() {
+    const [userName, setUserName] = useState({
+        value:''
+    });
+    const modalRef = React.createRef();
+
+    useEffect( async () => {
+        console.log('%c USE EFFECT', 'color:fuchsia')
+        await loadProfileDetails()
+        if(profileStore.profile.userName !== userName.value){
+            setUserName({value:profileStore.profile.userName})
+        }
+    }, []);
+
+
+    const handleOnEditPress = () =>{
+        console.log('%c HANDLE', 'color:fuchsia')
+        modalRef.current.open()
+    }
+
+    const handleOnSave = async () => {
+        const result = await updateUserName(userName.value)
+        modalRef.current.close()
+    }
+
+    const handleOnCancel = async () => {
+        setUserName({value:profileStore.profile.userName})
+        modalRef.current.close()
+    }
+
+
+
+    const handleUserNameChange = (val)=>{
+        setUserName({value:val})
+    }
+
     return (
-        <View style={s.container}>
-            <View style={s.avatarContainer}>
-                <Image style={s.avatarImage} source={require('../../assets/images/avatar.jpg')}/>
-            </View>
-            <View style={s.infoContainer}>
-                <Text style={s.infoText}>SuperCzytelnik123</Text>
-                <Text style={s.infoText}>Lvl. 23</Text>
-                <Text style={s.infoText}>Dni pod rząd: 74</Text>
-            </View>
-        </View>
+        <Observer>
+            {() => (
+                <View style={s.container}>
+                    <View style={s.avatarContainer}>
+                        <Image style={s.avatarImage} source={require('../../assets/images/avatar2.png')}/>
+                    </View>
+                    <View style={s.infoContainer}>
+                        <Text onPress={()=>handleOnEditPress()} style={s.infoText}>{profileStore.profile.userName}</Text>
+                        <Text style={s.infoText}>Level: {profileStore.profile.level}</Text>
+                        <Text style={s.infoText}>Dni pod rząd: {profileStore.profile.dayStreak}</Text>
+                    </View>
+                    <Modal ref={modalRef}>
+                        <View>
+                            <TextInput
+                                style={{width:'250px'}}
+                                value={userName.value}
+                                onChangeText={v=>handleUserNameChange(v)}
+
+                            />
+                            <View style={s.buttonsView}>
+                                <View style={{marginRight: Spacing.sm}}>
+                                 <Button  title={'Zapisz'} onPress={()=>handleOnSave()}/>
+                                </View>
+                                 <Button color={'#607D8B'} title={'Anuluj'} onPress={()=>handleOnCancel()}/>
+                            </View>
+                        </View>
+                    </Modal>
+                </View>
+            )}
+        </Observer>
     );
 }
 
@@ -42,6 +102,13 @@ const s = StyleSheet.create({
         justifyContent: 'space-between'
     },
     infoText: {
-        fontSize: FontSize.h4
+        fontSize: FontSize.h4,
+        textOverflow: "ellipsis",
+        width: '190px'
     },
+    buttonsView: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        marginTop: Spacing.md
+    }
 });

@@ -9,7 +9,7 @@ import AnnualReadPages from "./Charts/AnnualReadPages";
 export default function PagesRead() {
     return (
         <View style={s.container}>
-            <WeeklyReadPages/>
+            {/*<WeeklyReadPages/>*/}
             <MonthlyReadPages/>
             <AnnualReadPages/>
         </View>

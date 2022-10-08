@@ -3,10 +3,11 @@
  * https://docs.expo.io/guides/color-schemes/
  */
 
-import {Text as DefaultText, View as DefaultView, Button as DefaultButton} from 'react-native';
+import {Text as DefaultText, View as DefaultView, Button as DefaultButton, TextInput as DefaultTextInput} from 'react-native';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
+import Spacing from "../constants/Spacing";
 
 export function useThemeColor(
   props: { light?: string; dark?: string },
@@ -30,6 +31,7 @@ type ThemeProps = {
 export type TextProps = ThemeProps & DefaultText['props'];
 export type ViewProps = ThemeProps & DefaultView['props'];
 export type ButtonProps = ThemeProps & DefaultButton['props'];
+export type TextInputProps = ThemeProps & DefaultTextInput['props'];
 
 export function Text(props: TextProps) {
   const { style, lightColor, darkColor, ...otherProps } = props;
@@ -50,4 +52,11 @@ export function Button(props:ButtonProps){
   const color = useThemeColor({ light: lightColor, dark: darkColor }, 'tint');
 
   return <DefaultButton color={color} {...otherProps}/>
+}
+
+export function TextInput(props:TextInputProps) {
+  const { style, lightColor, darkColor, ...otherProps } = props;
+  const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
+
+  return <DefaultTextInput style={[{ color, padding: Spacing.sm }, style]} {...otherProps}/>
 }

@@ -1,14 +1,31 @@
 import {ScrollView, StyleSheet} from 'react-native';
 
-import { Text, View } from '../components/Themed';
+import {Button, Text, View} from '../components/Themed';
 import BasicInfo from "../components/Profile/BasicInfo";
 import Spacing from "../constants/Spacing";
 import PagesRead from "../components/Profile/PagesRead";
+import {login, register, logOut} from '../firebase/main'
+import {userStore} from "../store/user";
+import {useToast} from "react-native-toast-notifications";
 
 export default function Profile() {
+
+  const toast = useToast();
+
+  const handleOnLogOut = async () => {
+    const response = await logOut()
+    if(response) {
+      userStore.removeUser()
+      toast.show('Pomyślnie wylogowano', {type:'success'})
+    } else {
+      toast.show('Błąd z wylogowaniem, spróbuj jeszcze raz', {type:'danger'})
+    }
+  }
+
   return (
     <ScrollView style={s.container}>
       <View style={s.basicInfo}>
+        <Button title={'LOG OUT'} onPress={() => handleOnLogOut()}/>
         <BasicInfo />
         <PagesRead/>
       </View>

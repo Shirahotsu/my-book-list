@@ -8,7 +8,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer, DefaultTheme, DarkTheme} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import * as React from 'react';
-import {ColorSchemeName, Pressable} from 'react-native';
+import {ColorSchemeName, Pressable, Text} from 'react-native';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
@@ -21,6 +21,17 @@ import Profile from "../screens/Profile";
 import Settings from "../screens/Settings";
 import {RootStackParamList, RootTabParamList, RootTabScreenProps} from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
+import LogIn from '../screens/LogIn'
+import SignIn from "../screens/SingIn";
+import {observer} from "mobx-react";
+import {useState} from "react";
+import {userStore} from "../store/user";
+
+const isLoggedIn = false
+
+const logUserFromStorage = () => {
+
+}
 
 export default function Navigation({colorScheme}: { colorScheme: ColorSchemeName }) {
     return (
@@ -32,19 +43,31 @@ export default function Navigation({colorScheme}: { colorScheme: ColorSchemeName
     );
 }
 
+const AuthStack = createNativeStackNavigator();
+
 /**
  * A root stack navigator is often used for displaying modals on top of all other content.
  * https://reactnavigation.org/docs/modal
  */
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-function RootNavigator() {
+const RootNavigator = observer(()=> {
+
     return (
         <Stack.Navigator>
-            <Stack.Screen name="Root" component={BottomTabNavigator} options={{headerShown: false}}/>
+            <Stack.Screen name="Root" component={ userStore.isLogged ? BottomTabNavigator : AuthStackView} options={{headerShown: false}}/>
             <Stack.Screen name="NotFound" component={NotFoundScreen} options={{title: 'Oops!'}}/>
         </Stack.Navigator>
     );
+})
+
+function AuthStackView({navigation}:any){
+    return(
+        <AuthStack.Navigator>
+            <Stack.Screen name="Login" component={LogIn} options={{headerShown: false}}/>
+            <Stack.Screen name="SignIn" component={SignIn} options={{headerShown: false}}/>
+        </AuthStack.Navigator>
+    )
 }
 
 /**

@@ -55,10 +55,7 @@ const loadProfileDetails = async () => {
     const docRef = doc(db, `profile/${userId}`);
     const docSnap = await getDoc(docRef);
     const data = docSnap.data()
-    console.log(data)
-    if(!data){
-        createProfileDetails()
-    } else {
+    if(data){
         const userProfile:Profile = {
             userId:data.userId,
             achievements:data.achievements,
@@ -73,11 +70,10 @@ const loadProfileDetails = async () => {
     }
 }
 
-const createProfileDetails = async () => {
-    const userId = userStore.user.uid
-    const colRef = collection(db, 'profile')
+const createProfileDetails = async (newUserId:string|null = null) => {
+    const userId = newUserId ?? userStore.user.uid
     const newUserProfile = {...emptyUserProfile, userId}
-    const result = await setDoc(doc(db, 'profile', userId), newUserProfile)
+    await setDoc(doc(db, 'profile', userId), newUserProfile)
 }
 
 const updateUserName = async (userName:string) => {
@@ -95,5 +91,6 @@ const updateUserName = async (userName:string) => {
 
 export {
     loadProfileDetails,
-    updateUserName
+    updateUserName,
+    createProfileDetails
 }

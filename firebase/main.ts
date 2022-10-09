@@ -23,11 +23,11 @@ const auth = getAuth(app);
 onAuthStateChanged(auth, user => {
     // Check for user status
     if(user){
-        const test = {
+        const loggedUser = {
             accessToken: user.accessToken,
             uid: user.uid
         }
-        userStore.setUser(test)
+        userStore.setUser(loggedUser)
     } else {
 
     }
@@ -36,20 +36,21 @@ onAuthStateChanged(auth, user => {
 const login = async (email:string, password:string) => {
     try {
         const userCredential:UserCredential = await signInWithEmailAndPassword(auth, email, password)
-        console.log('userCredential',userCredential)
 
         return {success: true, value:userCredential}
     } catch (e) {
-        // console.log(JSON.stringify(e))
-        // console.log('ERRRORRRRR', e)
         return {success: false, value: getUserLoginError(e)}
     }
 
 }
 
 const register = async (email:string, password:string)=> {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password)
-    console.log(userCredential)
+    try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+        return {success: true, value: userCredential}
+    } catch (e) {
+        return {success: false, value: e}
+    }
 }
 
 const logOut = async () => {

@@ -1,9 +1,11 @@
-import {ScrollView, StyleSheet, TextInput} from 'react-native';
+import {ScrollView, StyleSheet} from 'react-native';
 
-import {Button, Text, View} from '../components/Themed';
+import {Button, Text, View, TextInput} from '../components/Themed';
 import Spacing from "../constants/Spacing";
-import {login, register} from '../firebase/main'
+import { register} from '../firebase/main'
+import {createProfileDetails, loadProfileDetails} from '../firebase/profile'
 import React, { useState } from 'react';
+import {useToast} from "react-native-toast-notifications";
 
 
 
@@ -11,22 +13,49 @@ import React, { useState } from 'react';
 export default function SignIn({navigation}:any) {
 
   const [loginParams, setLoginParams] = useState({
-    email:'email',
+    email:'',
     password: ''
   });
 
-  const onChangeText = value => {
-    console.log(value)
+  const toast = useToast();
+
+  const setEmail = value => {
+    setLoginParams({...loginParams, email: value})
+  }
+  const setPassword = value => {
+    setLoginParams({...loginParams, password: value})
+  }
+
+  const onSignIn = async () => {
+    console.log('%c onSignIn', 'color:fuchsia')
+    const response = await register(loginParams.email, loginParams.password)
+    if(response.success){
+      console.log('response',response)
+      await createProfileDetails(response.value.user.uid)
+      await loadProfileDetails()
+      toast.show('Pomyślnie zarejestrowano się', {type:'success'})
+
+    } else {
+      toast.show(String(response.value), {type:'danger'})
+    }
   }
 
   return (
       <View style={s.basicInfo}>
         <Text>SignIn</Text>
         <Button title={'Login'} onPress={()=>navigation.push('Login')}/>
-          <TextInput
-              onChangeText={onChangeText}
-              value={loginParams.email}
-          />
+
+        <TextInput
+            onChangeText={setEmail}
+            value={loginParams.email}
+            placeholder={'Email'}
+        />
+        <TextInput
+            onChangeText={setPassword}
+            value={loginParams.password}
+            placeholder={'Password'}
+        />
+        <Button title={'Zarejestruj się'} onPress={()=>onSignIn()}/>
       </View>
   );
 }

@@ -34,7 +34,7 @@ export interface Book {
 }
 
 export interface DailyReadPages {
-    date: Date,
+    date: Object,
     pages: Number
 }
 

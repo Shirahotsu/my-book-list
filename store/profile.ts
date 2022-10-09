@@ -1,5 +1,5 @@
 import {action, computed, makeObservable, observable} from "mobx";
-import {Profile as ProfileInterface} from '../models/Profile'
+import {Profile as ProfileInterface, DailyReadPages} from '../models/Profile'
 
 const emptyUserProfile:ProfileInterface = {
     userId:'',
@@ -41,7 +41,12 @@ export class Profile {
             profile:observable,
             setProfile: action,
             changeUserName: action,
+            dailyReadPages: computed
         })
+    }
+
+    get dailyReadPages():DailyReadPages[]{
+        return this.profile.dailyReadPages
     }
 
     setProfile(newProfile:ProfileInterface){

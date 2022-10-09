@@ -1,6 +1,6 @@
-import React, {useState, Fragment, useCallback, useMemo, useRef, Props} from 'react';
+import React, {useState, Fragment, useCallback, useMemo, useRef, Props, useEffect} from 'react';
 import {StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
-import { Text, View } from '../../Themed';
+import {Text, View} from '../../Themed';
 import {Calendar} from 'react-native-calendars';
 import testIDs from './testIDs';
 import {theme} from './MonthlyCallendarConfig'
@@ -9,8 +9,14 @@ import FontSize from "../../../constants/FontSize";
 import Colors from "../../../constants/Colors";
 import {Direction} from "react-native-calendars/src/types";
 import {LocaleConfig} from 'react-native-calendars';
+import {loadProfileDetails} from "../../../firebase/profile";
+import {profileStore} from "../../../store/profile";
+import {observer} from "mobx-react";
+import {observe, toJS} from "mobx";
+import {DailyReadPages} from "../../../models/Profile";
+import Spacing from "../../../constants/Spacing";
 
-const INITIAL_DATE = '2018-03-01';
+const INITIAL_DATE = new Date();
 
 
 LocaleConfig.locales['pl'] = {
@@ -30,94 +36,106 @@ LocaleConfig.locales['pl'] = {
     ],
     monthNamesShort: ['Sty', 'Lut', 'Mar', 'Kwi', 'Maj', 'Cze', 'Lip', 'Sie', 'Wrz', 'Paź', 'Lis', 'Gru'],
     dayNames: ['Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota'],
-    dayNamesShort: ['Ndz','Pn','Wt','Śr','Cz','Pt','So',],
+    dayNamesShort: ['Ndz', 'Pn', 'Wt', 'Śr', 'Cz', 'Pt', 'So',],
     today: "Dziś"
 };
 LocaleConfig.defaultLocale = 'pl';
 
 const MonthlyReadPages = () => {
-    const [selected, setSelected] = useState(INITIAL_DATE);
+
+    const convertDateToDashedDate = (date): string => {
+        return date.toISOString().replace(/T.*/, '').split('-').join('-')
+    }
+
+    const [selected, setSelected] = useState(convertDateToDashedDate(INITIAL_DATE));
+    const [markedDates, setMarkedDates] = useState({})
+
+    useEffect(async () => {
+        if (Object.keys(markedDates).length === 0) {
+            await loadProfileDetails()
+
+            const dailyReadPages = profileStore.dailyReadPages
+            const convertedObject = {}
+            dailyReadPages.forEach(item => {
+                const key = convertFormSecondsToDashedDate(item.date.seconds)
+                Object.assign(convertedObject, {
+                    [key]: {
+                        customStyles: {
+                            container: {
+                                backgroundColor: getMarkedDataColor(item.pages),
+                            },
+                        },
+                        pages: item.pages
+                    }
+                })
+            })
+            setMarkedDates({...convertedObject})
+        }
+    });
+
+
+    const convertFormSecondsToDashedDate = (seconds: number) => {
+        const date = new Date(seconds * 1000);
+        return convertDateToDashedDate(date)
+    }
+
+
+    const getMarkedDataColor = (pages: number): string => {
+        if (pages >= 100) {
+            return '#4CAF50'
+        }
+        if (pages > 10) {
+            return '#FFC107'
+        }
+        return '#3F51B5'
+    }
 
     const onDayPress = useCallback((day) => {
-        console.log('day',day)
         setSelected(day.dateString);
     }, []);
 
-    const Arrow = (direction:any) => {
-        console.log('direction',direction)
+    const Arrow = (direction: any) => {
         return (<FontAwesome5 size={FontSize.h4} name={direction.props === 'left' ? 'arrow-left' : 'arrow-right'}
-                      color={Colors['dark'].tint}/>)
+                              color={Colors['dark'].tint}/>)
     }
 
     const SelectedData = () => {
-        const test:any = {
-            '2018-03-01':9,
-            '2018-03-08':45,
-            '2018-03-09':18,
-            '2018-03-14':234,
-            '2018-03-15':33,
-        }
-        return(test[selected] ? <Text >{selected}:{test[selected]}</Text> : <Text/>)
+        return (
+            <View style={s.selectedDate}>
+                {markedDates[selected] && (
+                    <>
+                        <Text>Data: {selected}</Text>
+                        <Text>Przeczytane strony: {markedDates[selected].pages}</Text>
+                    </>
+                )}
+
+            </View>
+        )
     }
 
     const renderCalendarWithCustomMarkingType = () => {
         return (
             <View>
-            <Fragment>
-                <Calendar
-                    style={styles.calendar}
-                    hideExtraDays
-                    enableSwipeMonths
-                    current={INITIAL_DATE}
-                    minDate={'2018-03-01'}
-                    onDayPress={onDayPress}
-                    markingType={'custom'}
-                    theme={theme('dark')}
-                    renderArrow={direction => <Arrow props={direction} />}
-                    markedDates={{
-                        '2018-03-01': {
-                            customStyles: {
-                                container: {
-                                    backgroundColor: 'blue',
-                                },
-                            }
-                        },
-                        '2018-03-08': {
-                            selected: true
-                        },
-                        '2018-03-09': {
-                            customStyles: {
-                                container: {
-                                    backgroundColor: 'blue',
-                                },
-                            }
-                        },
-                        '2018-03-14': {
-                            customStyles: {
-                                container: {
-                                    backgroundColor: 'green'
-                                },
-                            }
-                        },
-                        '2018-03-15': {
-                            customStyles: {
-                                container: {
-                                    backgroundColor: 'yellow',
-                                    elevation: 2
-                                },
-                            }
-                        },
-                    }}
-                />
-            </Fragment>
+                <Fragment>
+                    <Calendar
+                        style={s.calendar}
+                        hideExtraDays
+                        enableSwipeMonths
+                        current={convertDateToDashedDate(INITIAL_DATE)}
+                        minDate={'2018-03-01'}
+                        onDayPress={onDayPress}
+                        markingType={'custom'}
+                        theme={theme('dark')}
+                        renderArrow={direction => <Arrow props={direction}/>}
+                        markedDates={markedDates}
+                    />
+                </Fragment>
                 <View>
-                    <Text>Wybrana data:</Text>
                     <SelectedData/>
                 </View>
             </View>
         );
     };
-
 
 
     const renderExamples = () => {
@@ -137,8 +155,13 @@ const MonthlyReadPages = () => {
 
 export default MonthlyReadPages;
 
-const styles = StyleSheet.create({
+const s = StyleSheet.create({
     calendar: {
         marginBottom: 10
+    },
+    selectedDate: {
+        minHeight: '40px',
+        marginTop: Spacing.sm,
+        marginBottom: Spacing.md
     }
 });

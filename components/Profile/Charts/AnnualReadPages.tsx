@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import {StyleSheet, Text} from 'react-native';
 
 import { Bar } from 'react-chartjs-2';
 import Colors from '../../../constants/Colors'
@@ -11,6 +11,12 @@ import {
     Tooltip,
     Legend,
 } from 'chart.js';
+import React, {useEffect, useRef, useState} from "react";
+import {loadProfileDetails} from "../../../firebase/profile";
+import {profileStore} from "../../../store/profile";
+import {DailyReadPages} from "../../../models/Profile";
+import {toJS} from "mobx";
+import {reforwardRef} from "react-chartjs-2/dist/utils";
 
 
 ChartJS.register(
@@ -39,19 +45,57 @@ export const options = {
 
 const labels = ['Sty', 'Lut', 'Mar', 'Kwi', 'Maj', 'Cze', 'Lip', 'Sie', 'Wrz', 'Paź', 'Lis', 'Gru'];
 
-export const data = {
+ const INITIAL_DATA = {
     labels,
     datasets: [
         {
             label: '',
-            data: [65, 59, 80, 81, 56, 55, 40, 65, 59, 80, 81, 56],
+            data: [123, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             backgroundColor: Colors.dark.tint,
         },
     ],
 };
 
+const getTotalReadPagesPerMonth = (dailyReadPages:DailyReadPages[]):number[] =>{
+    const monthsObj = {
+        '0':0,
+        '1':0,
+        '2':0,
+        '3':0,
+        '4':0,
+        '5':0,
+        '6':0,
+        '7':0,
+        '8':0,
+        '9':0,
+        '10':0,
+        '11':0,
+    }
+    dailyReadPages.map(item=>{
+        const date = new Date(item.date.seconds * 1000)
+        const key = date.getMonth()
+        monthsObj[key] = monthsObj[key] + item.pages
+    })
+    return Object.values(monthsObj)
+}
+
 export default function AnnualReadPages() {
+    const chartRef = useRef<ChartJS>(null);
+    useEffect(async () => {
+            await loadProfileDetails()
+
+            const dailyReadPages:DailyReadPages[] = profileStore.dailyReadPages
+            const totalReadPagesPerMonth = getTotalReadPagesPerMonth(dailyReadPages)
+            const newBarData = INITIAL_DATA
+            newBarData.datasets[0].data = totalReadPagesPerMonth
+            const chart = chartRef.current;
+            chart.data = newBarData
+            chart.update()
+    }, []);
+
     return (
-            <Bar options={options} data={data} />
+        <>
+            <Bar ref={chartRef} options={options} data={INITIAL_DATA} type='bar'/>
+        </>
     );
 }

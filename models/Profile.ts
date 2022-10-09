@@ -34,8 +34,13 @@ export interface Book {
 }
 
 export interface DailyReadPages {
-    date: Object,
+    date: DateGT,
     pages: Number
+}
+
+export interface DateGT {
+    nanoseconds: number
+    seconds: number
 }
 
 export enum BookStatus {
@@ -43,3 +48,4 @@ export enum BookStatus {
     Reading,
     Completed,
 }
+

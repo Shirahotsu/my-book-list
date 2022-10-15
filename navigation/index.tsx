@@ -26,6 +26,7 @@ import SignIn from "../screens/SingIn";
 import {observer} from "mobx-react";
 import {useState} from "react";
 import {userStore} from "../store/user";
+import {Button} from "../components/Themed";
 
 const isLoggedIn = false
 
@@ -114,7 +115,7 @@ function BottomTabNavigator() {
                     unmountOnBlur:true,
                     tabBarIcon: ({color}) => <TabBarIcon name="hotjar" color={color}/>,
                     tabBarShowLabel: false,
-                    headerShown: false
+                    headerShown: false,
                 }}
             />
             <BottomTab.Screen

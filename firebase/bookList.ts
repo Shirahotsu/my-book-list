@@ -19,8 +19,9 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const loadFirst10Books = async () => {
+    const {sortBy, direction} = bookListStore.sortOption
     const colRef = collection(db, 'book');
-    const q = query(colRef, orderBy("totalScore", 'desc'), limit(10));
+    const q = query(colRef, orderBy(sortBy, direction), limit(10));
     const snapshot = await getDocs(q)
     const bookList: Book[] = []
     snapshot.forEach(doc => {
@@ -32,9 +33,10 @@ const loadFirst10Books = async () => {
 }
 
 const loadAdditional10Books = async () => {
+    const {sortBy, direction} = bookListStore.sortOption
     const count = await getBookListCount()
     const colRef = collection(db, 'book');
-    const q = query(colRef, orderBy("totalScore", 'desc'), startAfter(bookListStore.lastVisibleDoc), limit(1));
+    const q = query(colRef, orderBy(sortBy, direction), startAfter(bookListStore.lastVisibleDoc), limit(1));
     const snapshot = await getDocs(q)
     const bookList: Book[] = []
     snapshot.forEach(doc => {

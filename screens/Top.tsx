@@ -7,6 +7,7 @@ import Spacing from "../constants/Spacing";
 import {loadFirst10Books, loadAdditional10Books} from "../firebase/bookList";
 import {bookListStore} from '../store/bookList'
 import {observer} from "mobx-react";
+import SortOptions from "../components/TopBooks/SortOptions";
 
 const getAverageScore = (totalScore: number, scoreAmount: number) => {
     return parseFloat((totalScore / scoreAmount).toFixed(2))
@@ -49,8 +50,8 @@ export default function Top({navigation}: any) {
     return (
         <SafeAreaView style={s.container}>
             <ScrollView style={s.scroll}>
+                <SortOptions/>
                 <BookListView/>
-
             </ScrollView>
         </SafeAreaView>
     );

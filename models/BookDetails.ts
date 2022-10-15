@@ -1,4 +1,4 @@
-export default interface BookDetails {
+ interface BookDetails {
     isInMyList: boolean,
     title: string,
     imgUrl?: string,

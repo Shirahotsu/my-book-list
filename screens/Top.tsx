@@ -8,6 +8,8 @@ import {loadFirst10Books, loadAdditional10Books} from "../firebase/bookList";
 import {bookListStore} from '../store/bookList'
 import {observer} from "mobx-react";
 import SortOptions from "../components/TopBooks/SortOptions";
+import {Book} from "../models/Book";
+import { bookDetailsStore} from "../store/bookDetails";
 
 const getAverageScore = (totalScore: number, scoreAmount: number) => {
     return parseFloat((totalScore / scoreAmount).toFixed(2))
@@ -24,6 +26,12 @@ export default function Top({navigation}: any) {
         loadAdditional10Books()
     }
 
+    const handleOnBookItemClick = (book:Book) => {
+        bookDetailsStore.setIsInBookshelfView(false)
+        bookDetailsStore.setBookDetails(book)
+        navigation.push('Details')
+    }
+
     const BookListView = observer(() => {
 
         return (
@@ -31,7 +39,7 @@ export default function Top({navigation}: any) {
                 {
                     bookListStore.bookList?.map((book, i) =>
                         <View key={i} style={s.item}>
-                            <TouchableHighlight onPress={() => navigation.push('Details')}>
+                            <TouchableHighlight onPress={() => handleOnBookItemClick(book)}>
                                 <BookItem isFromMyBookList={false} title={book.title} booksRead={book.usersFinished}
                                           score={getAverageScore(book.totalScore, book.scoreAmount)} number={i + 1}/>
                             </TouchableHighlight>

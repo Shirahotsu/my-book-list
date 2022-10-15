@@ -4,20 +4,27 @@ export interface Book {
     bookCover: string
     categories: string[]
     description: string
-    title: string,
-    totalScore: number,
-    scoreAmount: number,
-    usersFinished: number,
-    id: string,
+    title: string
+    totalScore: number
+    scoreAmount: number
+    usersFinished: number
+    id: string
+    released: Released
 }
 
 export interface Comment {
     comment: string
     userId: string,
     userName: string
+    released: Released
 }
 
 export interface UserRate {
     userId: string
     userScore: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
+}
+
+export interface Released {
+    seconds: number,
+    nanoseconds?: number
 }

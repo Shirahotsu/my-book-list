@@ -10,6 +10,12 @@ import Colors from "../constants/Colors";
 import Title from "../components/BookItem/Title";
 import useColorScheme from "../hooks/useColorScheme";
 import BadgeThemed from "../components/BadgeThemed";
+import {observer} from "mobx-react";
+import {bookDetailsStore} from "../store/bookDetails";
+import {convertDateToDashedDate, convertSecondsToDate} from "../utils/date";
+import React, {ChangeEvent, useEffect, useState} from "react";
+import {Book} from "../models/Book";
+import {addComment} from "../firebase/bookList";
 
 const bookDetailsMock: BookDetailsInterface = {
     isInMyList: false,
@@ -27,18 +33,46 @@ const bookDetailsMock: BookDetailsInterface = {
     }
 }
 
-function MainInfoButtons ({isInMyList, myScore, pagesRead}:any) {
-    if(isInMyList) {
-        return <Button title={'ADD TO MY LIST'} onPress={()=>console.log('%c ES', 'color:fuchsia')}/>
+function MainInfoButtons({isInBookshelfView, myScore, pagesRead}: any) {
+    if (!isInBookshelfView) {
+        return <Button title={'ADD TO MY LIST'} onPress={() => console.log('%c ES', 'color:fuchsia')}/>
     } else return (<>
-        <Button title={'READING'} onPress={()=>console.log('%c ES', 'color:fuchsia')}/>
-        <Button title={'MY SCORE: '+ myScore} onPress={()=>console.log('%c ES', 'color:fuchsia')}/>
-        <Button title={'PAGES READ: '+ pagesRead} onPress={()=>console.log('%c ES', 'color:fuchsia')}/>
+        <Button title={'READING'} onPress={() => console.log('%c ES', 'color:fuchsia')}/>
+        <Button title={'MY SCORE: ' + myScore} onPress={() => console.log('%c ES', 'color:fuchsia')}/>
+        <Button title={'PAGES READ: ' + pagesRead} onPress={() => console.log('%c ES', 'color:fuchsia')}/>
     </>)
 }
 
 export default function BookDetails() {
     const colorScheme = useColorScheme();
+    const [comment, setComment] = useState('');
+    const [bookDetails, setBookDetails] = useState<Book | null>(null)
+    const [isInBookshelfView, setIsInBookshelfView] = useState(false)
+    const textarea = React.createRef();
+
+    useEffect(() => {
+        setBookDetails(bookDetailsStore.bookDetails)
+        setIsInBookshelfView(bookDetailsStore.isInBookshelfView)
+    }, [])
+
+    const handleAddComment = async () => {
+        const commentMessage = textarea.current.value
+        if(!commentMessage.trim()){
+            return
+        }
+        const result = await addComment(commentMessage)
+        if (result){
+            textarea.current.value = ''
+        }
+    }
+
+    const handleOnKeydown = (event: KeyboardEvent) => {
+        if (event.key === 'Enter') {
+            handleAddComment()
+        }
+    }
+
+
     const details = {
         isInMyList: bookDetailsMock.isInMyList ?? false,
         title: bookDetailsMock.title ?? '',
@@ -54,74 +88,123 @@ export default function BookDetails() {
             score: bookDetailsMock.usersScore?.score ?? 0
         }
     }
-    
+
+    const BookDetailsView = () => {
+        return (bookDetails &&
+            <>
+                <View style={s.container}>
+                    <View>
+                        <Text numberOfLines={1} style={s.title}>
+                            {bookDetails.title}
+                        </Text>
+                    </View>
+
+                    <View style={s.mainInfo}>
+                        <View style={s.mainInfoImageContainer}>
+                            <Image style={s.mainInfoImage} source={require('../assets/images/book-img-1.jpg')}/>
+                        </View>
+                        <View style={s.mainInfoContent}>
+                            {MainInfoButtons({isInBookshelfView})}
+                        </View>
+                    </View>
+
+                    <View style={s.scoreContainer}>
+
+                        <View>
+                            <View style={s.numericInfo}>
+                                <View style={s.bookIcon}>
+                                    <FontAwesome5 size={FontSize.h4} name="star" color={Colors[colorScheme].text}/>
+                                </View>
+                                <Title>{details.usersScore.score}</Title>
+                            </View>
+                            <View style={s.numericInfo}>
+                                <View style={s.bookIcon}>
+                                    <FontAwesome5 size={FontSize.h4} name={'users'}
+                                                  color={Colors[colorScheme].text}/>
+                                </View>
+                                <Title>{bookDetails.scoreAmount}</Title>
+                            </View>
+
+                            <View style={s.spacer}/>
+
+                            <View style={s.numericInfo}>
+                                <View style={s.bookIcon}>
+                                    <FontAwesome5 size={FontSize.h4} name={'book-reader'}
+                                                  color={Colors[colorScheme].text}/>
+                                </View>
+                                <Title>{bookDetails.usersFinished}</Title>
+                            </View>
+                        </View>
+                    </View>
+
+                    <View style={s.releasedDateContainer}>
+
+                        <Text style={{marginRight: Spacing.xs}}>
+                            Data wydania:
+                        </Text>
+                        <Text>
+                            {convertDateToDashedDate(convertSecondsToDate(bookDetails.released.seconds))}
+                        </Text>
+                    </View>
+
+                    <View style={s.categoryContainer}>
+                        {
+                            bookDetails.categories.map((category, i) => <BadgeThemed
+                                style={s.categoryBadge}
+                                key={i}
+                                value={category}/>)
+                        }
+
+                    </View>
+
+                    <View style={s.descriptionContainer}>
+                        <Text style={{fontSize: FontSize.h3}}>
+                            Opis:
+                        </Text>
+                        <Text>
+                            {bookDetails.description}
+                        </Text>
+                    </View>
+                    <View>
+                        <View>
+                            <textarea ref={textarea} onKeyDown={e => handleOnKeydown(e)} id={'new-comment-textarea'}/>
+                            <Button title={'Dodaj'} onPress={() => handleAddComment()}/>
+                        </View>
+                        <Text style={{fontSize: FontSize.h2}}>Komentarze:</Text>
+                        <CommentsView/>
+                    </View>
+                </View>
+            </>
+        )
+    }
+
+    const CommentsView = observer(() => {
+        return (bookDetailsStore.bookDetails &&
+            <View style={{paddingTop: Spacing.xs, paddingHorizontal: Spacing.xs}}>
+                {bookDetailsStore.bookDetails.comments.map((comment, i) => {
+                    return (
+                        <View key={i} style={{marginVertical: Spacing.sm}}>
+                            <View style={{flexDirection: "row", alignItems: 'baseline', flexWrap: 'wrap'}}>
+                                <Text style={{fontWeight: 'bold'}}>{comment.userName}</Text>
+                                <Text style={{
+                                    fontSize: FontSize.basic * 0.7,
+                                    opacity: 0.8
+                                }}> {convertDateToDashedDate(convertSecondsToDate(comment.released.seconds))}</Text>
+
+                            </View>
+                            <Text style={{marginLeft: Spacing.xs}}>{comment.comment}</Text>
+                        </View>
+                    )
+
+                }).reverse()
+                }
+            </View>
+        )
+    })
+
     return (
         <ScrollView>
-            <View style={s.container}>
-                <View>
-                    <Text numberOfLines={1} style={s.title}>
-                        {details.title}
-                    </Text>
-                </View>
-
-                <View style={s.mainInfo}>
-                    <View style={s.mainInfoImageContainer}>
-                        <Image style={s.mainInfoImage} source={require('../assets/images/book-img-1.jpg')}/>
-                    </View>
-                    <View style={s.mainInfoContent}>
-                        {MainInfoButtons(details)}
-                    </View>
-                </View>
-
-                <View style={s.scoreContainer}>
-
-                    <View>
-                        <View style={s.numericInfo}>
-                            <View style={s.bookIcon}>
-                                <FontAwesome5 size={FontSize.h4} name="star" color={Colors[colorScheme].text}/>
-                            </View>
-                            <Title>{details.usersScore.score}</Title>
-                        </View>
-                        <View style={s.numericInfo}>
-                            <View style={s.bookIcon}>
-                                <FontAwesome5 size={FontSize.h4} name={'users'}
-                                              color={Colors[colorScheme].text}/>
-                            </View>
-                            <Title>{details.usersScore.users}</Title>
-                        </View>
-
-                        <View style={s.spacer}/>
-
-                        <View style={s.numericInfo}>
-                            <View style={s.bookIcon}>
-                                <FontAwesome5 size={FontSize.h4} name={'book-reader'}
-                                              color={Colors[colorScheme].text}/>
-                            </View>
-                            <Title>{details.booksRead}</Title>
-                        </View>
-                    </View>
-                </View>
-
-                <View style={s.releasedDateContainer}>
-                    <Text>
-                        Release date:
-                        {JSON.stringify(details.releaseDate)}
-                    </Text>
-                </View>
-
-                <View style={s.categoryContainer}>
-                    {
-                       details.categories.map((category, i)=><BadgeThemed style={s.categoryBadge} key={i} value={category}/>)
-                    }
-
-                </View>
-
-                <View style={s.descriptionContainer}>
-                    <Text>
-                        {details.description}
-                    </Text>
-                </View>
-            </View>
+            <BookDetailsView/>
         </ScrollView>
     );
 }
@@ -172,19 +255,20 @@ const s = StyleSheet.create({
         marginRight: Spacing.xs
     },
     releasedDateContainer: {
-        paddingVertical:Spacing.xs
+        paddingVertical: Spacing.xs,
+        flexDirection: 'row',
     },
     categoryContainer: {
         flexDirection: 'row',
-        paddingVertical: Spacing.xs
+        paddingTop: Spacing.xs
     },
-    categoryBadge:{
+    categoryBadge: {
         marginRight: Spacing.xs
     },
     descriptionContainer: {
-        marginVertical: Spacing.xs
+        marginVertical: Spacing.xl
     },
-    spacer:{
-      paddingVertical: Spacing.xs
+    spacer: {
+        paddingVertical: Spacing.xs
     }
 });

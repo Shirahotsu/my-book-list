@@ -1,10 +1,23 @@
 import {initializeApp} from "firebase/app";
-import {getFirestore, collection, query, orderBy, limit, getDocs, startAfter} from 'firebase/firestore/lite';
+import {
+    getFirestore,
+    collection,
+    query,
+    orderBy,
+    limit,
+    getDocs,
+    startAfter,
+    doc,
+    updateDoc
+} from 'firebase/firestore/lite';
 import {FIREBASE_API_KEY, FIREBASE_APP_ID, FIREBASE_MESSAAGING_SENDER_ID} from 'react-native-dotenv';
 import {Book} from "../models/Book";
 import {bookListStore} from '../store/bookList'
 import {getBookListCount} from './quantities'
 import {toJS} from "mobx";
+import {bookDetailsStore} from "../store/bookDetails";
+import {profileStore} from "../store/profile";
+import {Comment} from '../models/Book'
 
 const firebaseConfig = {
     apiKey: FIREBASE_API_KEY,
@@ -50,8 +63,31 @@ const loadAdditional10Books = async () => {
     }
 }
 
+const addComment = async (commentMessage:string) => {
+    const newComment:Comment = {
+        released: {
+            seconds:  Math.round(Date.now() / 1000),
+        },
+        comment: commentMessage,
+        userId: profileStore.profile.userId,
+        userName: profileStore.profile.userName
+    }
+    const bookId = bookDetailsStore.bookDetails?.id
+    // @ts-ignore
+    const comments = [...bookDetailsStore.bookDetails?.comments, newComment]
+    const docRef = doc(db, `book/${bookId}`);
+    try {
+        await updateDoc(docRef, {comments})
+        bookDetailsStore.addComment(newComment)
+        return true;
+    } catch (e){
+        return false
+    }
+}
+
 
 export {
     loadFirst10Books,
-    loadAdditional10Books
+    loadAdditional10Books,
+    addComment
 }

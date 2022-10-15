@@ -4,7 +4,11 @@ export interface Book {
     bookCover: string
     categories: string[]
     description: string
-    title: string
+    title: string,
+    totalScore: number,
+    scoreAmount: number,
+    usersFinished: number,
+    id: string,
 }
 
 export interface Comment {

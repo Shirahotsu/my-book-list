@@ -1,66 +1,76 @@
 import {SafeAreaView, ScrollView, StyleSheet, TouchableHighlight} from 'react-native';
 
-import { Text, View } from '../components/Themed';
+import {Button, Text, View} from '../components/Themed';
 import BookItem from "../components/BookItem/BookItem";
-import React from "react";
+import React, {useEffect} from "react";
 import Spacing from "../constants/Spacing";
-import BookItemProps from "../models/BookItemProps";
+import {loadFirst10Books, loadAdditional10Books} from "../firebase/bookList";
+import {bookListStore} from '../store/bookList'
+import {observer} from "mobx-react";
 
-export default function Top({navigation}: any) {
-  return (
-      <SafeAreaView style={s.container}>
-        <ScrollView style={s.scroll}>
-          {
-            data2.map((d, i)=>
-                <View key={i} style={s.item} >
-                  <TouchableHighlight onPress={()=>navigation.push('Details')}>
-                   <BookItem isFromMyBookList={false} title={d.title} booksRead={d.booksRead} score={d.score} number={d.number}/>
-                  </TouchableHighlight>
-                </View>
-            )
-          }
-
-        </ScrollView>
-      </SafeAreaView>
-  );
+const getAverageScore = (totalScore: number, scoreAmount: number) => {
+    return parseFloat((totalScore / scoreAmount).toFixed(2))
 }
 
-const data2:BookItemProps[] = [
-  {
-    title:'Super pierwszy tytuł nwm jaki dokladnaie',
-    booksRead: 12345,
-    score: 7.32,
-    number:1,
-  },
-  {
-    title:'Super pierwszy tytuł nwm jaki dokladnaie',
-    booksRead: 12345,
-    score: 7.32,
-    number:2,
-  },
-  {
-    title:'Super pierwszy tytuł nwm jaki dokladnaie',
-    booksRead: 12345,
-    score: 7.32,
-    number:3,
-  }
-]
+export default function Top({navigation}: any) {
+
+    useEffect(() => {
+        loadFirst10Books()
+    }, [])
+
+
+    const handleOnLoadMoreBooks = () => {
+        loadAdditional10Books()
+    }
+
+    const BookListView = observer(() => {
+
+        return (
+            <>
+                {
+                    bookListStore.bookList?.map((book, i) =>
+                        <View key={i} style={s.item}>
+                            <TouchableHighlight onPress={() => navigation.push('Details')}>
+                                <BookItem isFromMyBookList={false} title={book.title} booksRead={book.usersFinished}
+                                          score={getAverageScore(book.totalScore, book.scoreAmount)} number={i + 1}/>
+                            </TouchableHighlight>
+                        </View>
+                    )
+                }
+                {
+                    bookListStore.loadMoreBooks &&
+                    <Button title={'Pobierz więcej'} onPress={() => handleOnLoadMoreBooks()}/>
+                }
+
+            </>
+        )
+    })
+
+    return (
+        <SafeAreaView style={s.container}>
+            <ScrollView style={s.scroll}>
+                <BookListView/>
+
+            </ScrollView>
+        </SafeAreaView>
+    );
+}
 
 const s = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  scroll: {
-    flex: 1,
-    width: '100%',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  item: {
-    marginVertical: Spacing.sm,
-  },
+    container: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    scroll: {
+        flex: 1,
+        width: '100%',
+    },
+    title: {
+        fontSize: 20,
+        fontWeight: 'bold',
+    },
+    item: {
+        marginVertical: Spacing.sm,
+    },
 });

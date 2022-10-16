@@ -10,12 +10,15 @@ import {observer} from "mobx-react";
 import SortOptions from "../components/TopBooks/SortOptions";
 import {Book} from "../models/Book";
 import { bookDetailsStore} from "../store/bookDetails";
+import Colors from "../constants/Colors";
+import useColorScheme from "../hooks/useColorScheme";
 
 const getAverageScore = (totalScore: number, scoreAmount: number) => {
     return parseFloat((totalScore / scoreAmount).toFixed(2))
 }
 
 export default function Top({navigation}: any) {
+    const colorScheme = useColorScheme();
 
     useEffect(() => {
         loadFirst10Books()
@@ -56,7 +59,7 @@ export default function Top({navigation}: any) {
     })
 
     return (
-        <SafeAreaView style={s.container}>
+        <SafeAreaView style={[s.container, {backgroundColor: Colors[colorScheme].background}]}>
             <ScrollView style={s.scroll}>
                 <SortOptions/>
                 <BookListView/>

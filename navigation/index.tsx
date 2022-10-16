@@ -88,6 +88,17 @@ function TopStackScreen({navigation}:any) {
     );
 }
 
+const SearchStack = createNativeStackNavigator();
+
+function SearchStackScreen({navigation}:any) {
+    return (
+        <SearchStack.Navigator initialRouteName="Search">
+            <SearchStack.Screen name="Search" component={Search} />
+            <SearchStack.Screen  name="Details" component={BookDetails} />
+        </SearchStack.Navigator>
+    );
+}
+
 const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
 function BottomTabNavigator() {
@@ -119,11 +130,13 @@ function BottomTabNavigator() {
                 }}
             />
             <BottomTab.Screen
-                name="Search"
-                component={Search}
+                name="SearchStack"
+                component={SearchStackScreen}
                 options={{
+                    unmountOnBlur:true,
                     tabBarIcon: ({color}) => <TabBarIcon name="search" color={color}/>,
-                    tabBarShowLabel: false
+                    tabBarShowLabel: false,
+                    headerShown: false,
                 }}
             />
             <BottomTab.Screen

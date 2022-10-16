@@ -8,7 +8,8 @@ import {
     getDocs,
     startAfter,
     doc,
-    updateDoc
+    updateDoc,
+    where,
 } from 'firebase/firestore/lite';
 import {FIREBASE_API_KEY, FIREBASE_APP_ID, FIREBASE_MESSAAGING_SENDER_ID} from 'react-native-dotenv';
 import {Book} from "../models/Book";
@@ -63,10 +64,10 @@ const loadAdditional10Books = async () => {
     }
 }
 
-const addComment = async (commentMessage:string) => {
-    const newComment:Comment = {
+const addComment = async (commentMessage: string) => {
+    const newComment: Comment = {
         released: {
-            seconds:  Math.round(Date.now() / 1000),
+            seconds: Math.round(Date.now() / 1000),
         },
         comment: commentMessage,
         userId: profileStore.profile.userId,
@@ -80,14 +81,62 @@ const addComment = async (commentMessage:string) => {
         await updateDoc(docRef, {comments})
         bookDetailsStore.addComment(newComment)
         return true;
-    } catch (e){
+    } catch (e) {
         return false
     }
+}
+
+const loadFirst50SearchResults = async (queryText: string) => {
+    const colRef = collection(db, 'book');
+    const lowerCaseQueryText = queryText.toLocaleLowerCase()
+    const q = query(colRef,
+        where('searchTitle', '>=', lowerCaseQueryText),
+        where('searchTitle', '<=', lowerCaseQueryText + '\uf8ff'),
+        orderBy('searchTitle', 'desc'),
+        limit(50)
+    );
+    const snapshot = await getDocs(q)
+    const bookList: Book[] = []
+    snapshot.forEach(doc => {
+        bookList.push({...<Book>doc.data(), id: doc.id})
+    })
+    bookListStore.setLastVisibleDoc(snapshot.docs[snapshot.docs.length - 1])
+    bookListStore.setBookList(bookList)
+    console.log(bookListStore.bookListLength<=50)
+    bookListStore.setLoadMoreBooks(!(bookListStore.bookListLength<=50))
+}
+
+const loadAdditional50SearchResults = async (queryText: string) => {
+    const colRef = collection(db, 'book');
+    const lowerCaseQueryText = queryText.toLocaleLowerCase()
+    const q = query(colRef,
+        where('searchTitle', '>=', lowerCaseQueryText),
+        where('searchTitle', '<=', lowerCaseQueryText + '\uf8ff'),
+        orderBy('searchTitle', 'desc'),
+        startAfter(bookListStore.lastVisibleDoc),
+        limit(50)
+    );
+
+    const snapshot = await getDocs(q)
+
+    if(snapshot.docs.length <1){
+        bookListStore.setLoadMoreBooks(false)
+        return
+    }
+
+    const bookList: Book[] = []
+    snapshot.forEach(doc => {
+        bookList.push({...<Book>doc.data(), id: doc.id})
+    })
+    bookListStore.setLastVisibleDoc(snapshot.docs[snapshot.docs.length - 1])
+    bookListStore.addToBookList(bookList)
 }
 
 
 export {
     loadFirst10Books,
     loadAdditional10Books,
-    addComment
+    addComment,
+    loadFirst50SearchResults,
+    loadAdditional50SearchResults
 }

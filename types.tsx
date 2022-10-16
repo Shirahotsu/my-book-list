@@ -29,6 +29,7 @@ export type RootStackScreenProps<Screen extends keyof RootStackParamList> = Nati
 export type RootTabParamList = {
   MyList: undefined;
   TopStack:NavigatorScreenParams<TopStack> | undefined
+  SearchStack:NavigatorScreenParams<SearchStack> | undefined
   Search: undefined;
   Profile: undefined;
   Settings: undefined;
@@ -36,6 +37,10 @@ export type RootTabParamList = {
 
 export type TopStack= {
   Top:undefined,
+  Details: undefined,
+}
+export type SearchStack= {
+  Search:undefined,
   Details: undefined,
 }
 

@@ -5,6 +5,7 @@ export interface Book {
     categories: string[]
     description: string
     title: string
+    searchTitle: string
     totalScore: number
     scoreAmount: number
     usersFinished: number

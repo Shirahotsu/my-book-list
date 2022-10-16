@@ -9,13 +9,10 @@ import {bookListStore} from '../store/bookList.store'
 import {observer} from "mobx-react";
 import SortOptions from "../components/TopBooks/SortOptions";
 import {Book} from "../models/Book.model";
-import { bookDetailsStore} from "../store/bookDetails.store";
+import {bookDetailsStore} from "../store/bookDetails.store";
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
-
-const getAverageScore = (totalScore: number, scoreAmount: number) => {
-    return parseFloat((totalScore / scoreAmount).toFixed(2))
-}
+import {getAverageScore} from "../utils/score";
 
 export default function Top({navigation}: any) {
     const colorScheme = useColorScheme();
@@ -29,7 +26,7 @@ export default function Top({navigation}: any) {
         loadAdditional10Books()
     }
 
-    const handleOnBookItemClick = (book:Book) => {
+    const handleOnBookItemClick = (book: Book) => {
         bookDetailsStore.setIsInBookshelfView(false)
         bookDetailsStore.setBookDetails(book)
         navigation.push('Details')

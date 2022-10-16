@@ -98,6 +98,16 @@ function SearchStackScreen({navigation}:any) {
         </SearchStack.Navigator>
     );
 }
+const MyBookshelfStack = createNativeStackNavigator();
+
+function MyBookshelfStackScreen({navigation}:any) {
+    return (
+        <MyBookshelfStack.Navigator initialRouteName="Search">
+            <MyBookshelfStack.Screen name="MyBookShelf" component={MyList} />
+            <MyBookshelfStack.Screen  name="Details" component={BookDetails} />
+        </MyBookshelfStack.Navigator>
+    );
+}
 
 const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
@@ -113,10 +123,12 @@ function BottomTabNavigator() {
             }}>
             <BottomTab.Screen
                 name="MyList"
-                component={MyList}
+                component={MyBookshelfStackScreen}
                 options={{
+                    unmountOnBlur:true,
                     tabBarIcon: ({color}) => <TabBarIcon name="book-open" color={color}/>,
-                    tabBarShowLabel: false
+                    tabBarShowLabel: false,
+                    headerShown: false,
                 }}
             />
             <BottomTab.Screen

@@ -38,13 +38,16 @@ const db = getFirestore(app);
 
 const loadBooksInMyBookshelf = async () => {
     const bookshelfBooksIds = profileStore.bookshelfBooksIds
+    if(bookshelfBooksIds.length <1){
+        return
+    }
     const bookshelfBookDetails = {}
     profileStore.profile.bookShelf.forEach(book => {
         Object.assign(bookshelfBookDetails, {
             [book.bookId]: {
                 pagesRead: book.pagesRead,
                 status: book.status,
-                myScore: book.myScore
+                myScore: book.myScore,
             }
         })
     })

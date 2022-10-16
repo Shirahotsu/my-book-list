@@ -15,6 +15,7 @@ import {convertDateToDashedDate, convertSecondsToDate} from "../utils/date";
 import React, {ChangeEvent, useEffect, useState} from "react";
 import {Book} from "../models/Book.model";
 import {addComment} from "../firebase/bookList.firebase";
+import {getAverageScore} from "../utils/score";
 
 
 function MainInfoButtons({isInBookshelfView, myScore, pagesRead}: any) {
@@ -22,8 +23,10 @@ function MainInfoButtons({isInBookshelfView, myScore, pagesRead}: any) {
         return <Button title={'ADD TO MY LIST'} onPress={() => console.log('%c ES', 'color:fuchsia')}/>
     } else return (<>
         <Button title={'READING'} onPress={() => console.log('%c ES', 'color:fuchsia')}/>
-        <Button title={'MY SCORE: ' + myScore} onPress={() => console.log('%c ES', 'color:fuchsia')}/>
-        <Button title={'PAGES READ: ' + pagesRead} onPress={() => console.log('%c ES', 'color:fuchsia')}/>
+        <Button title={'MY SCORE: ' + bookDetailsStore.bookDetails?.myScore}
+                onPress={() => console.log('%c ES', 'color:fuchsia')}/>
+        <Button title={'PAGES READ: ' + bookDetailsStore.bookDetails?.pagesRead}
+                onPress={() => console.log('%c ES', 'color:fuchsia')}/>
     </>)
 }
 
@@ -41,11 +44,11 @@ export default function BookDetails() {
 
     const handleAddComment = async () => {
         const commentMessage = textarea.current.value
-        if(!commentMessage.trim()){
+        if (!commentMessage.trim()) {
             return
         }
         const result = await addComment(commentMessage)
-        if (result){
+        if (result) {
             textarea.current.value = ''
         }
     }
@@ -83,7 +86,7 @@ export default function BookDetails() {
                                 <View style={s.bookIcon}>
                                     <FontAwesome5 size={FontSize.h4} name="star" color={Colors[colorScheme].text}/>
                                 </View>
-                                {/*<Title>{details.usersScore.score}</Title>*/}
+                                <Title>{getAverageScore(bookDetails.totalScore,bookDetails.scoreAmount)}</Title>
                             </View>
                             <View style={s.numericInfo}>
                                 <View style={s.bookIcon}>
@@ -133,14 +136,25 @@ export default function BookDetails() {
                             {bookDetails.description}
                         </Text>
                     </View>
-                    <View>
+                    {
+                        !bookDetailsStore.isInBookshelfView &&
                         <View>
-                            <textarea ref={textarea} onKeyDown={e => handleOnKeydown(e)} id={'new-comment-textarea'}/>
-                            <Button title={'Dodaj'} onPress={() => handleAddComment()}/>
+                            <View>
+                                <textarea ref={textarea} onKeyDown={e => handleOnKeydown(e)}
+                                          id={'new-comment-textarea'}/>
+                                <Button title={'Dodaj'} onPress={() => handleAddComment()}/>
+                            </View>
+                            <Text style={{fontSize: FontSize.h2}}>Komentarze:</Text>
+                            <CommentsView/>
                         </View>
-                        <Text style={{fontSize: FontSize.h2}}>Komentarze:</Text>
-                        <CommentsView/>
-                    </View>
+                    }
+                    {
+                        bookDetailsStore.isInBookshelfView &&
+                            <View>
+                                <Button title={'Usuń z półki'} onPress={()=>{}}/>
+                            </View>
+                    }
+
                 </View>
             </>
         )

@@ -1,4 +1,4 @@
-import {SafeAreaView, ScrollView, StyleSheet} from 'react-native';
+import {SafeAreaView, ScrollView, StyleSheet, TouchableHighlight} from 'react-native';
 
 import EditScreenInfo from '../components/EditScreenInfo';
 import {Text, View} from '../components/Themed';
@@ -14,6 +14,7 @@ import {bookShelfStore} from "../store/bookShelf.store";
 import {backgroundColor} from "react-native-calendars/src/style";
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
+import {Book} from "../models/Book.model";
 
 export default function MyList({navigation}: RootTabScreenProps<'MyList'>) {
     const colorScheme = useColorScheme();
@@ -22,13 +23,21 @@ export default function MyList({navigation}: RootTabScreenProps<'MyList'>) {
         loadBooksInMyBookshelf()
     }, [])
 
+    const handleOnBookItemClick = (book:Book) => {
+        bookDetailsStore.setIsInBookshelfView(true)
+        bookDetailsStore.setBookDetails(book)
+        navigation.push('Details')
+    }
+
     const BookshelfView = observer(() => {
         return (
             <>{
                 bookShelfStore.bookShelf.map((book, i) =>
                     <View key={i} style={s.item}>
-                        <BookItem isFromMyBookList={true} title={book.title} pagesRead={book.pagesRead} maxPages={0}
+                        <TouchableHighlight onPress={() => handleOnBookItemClick(book)}>
+                        <BookItem isFromMyBookList={true} title={book.title} pagesRead={book.pagesRead} maxPages={book.pages}
                                   score={book.myScore}/>
+                        </TouchableHighlight>
                     </View>
                 )}
             </>

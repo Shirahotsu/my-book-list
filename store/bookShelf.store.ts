@@ -1,7 +1,7 @@
-import {BookShelfItem} from "../models/BookShelf";
+import {BookShelfItem} from "../models/BookShelf.model";
 import {action, makeObservable, observable} from "mobx";
 
-class BookShelf {
+class BookShelfStore {
     bookShelf: BookShelfItem[] = []
 
     constructor() {
@@ -21,4 +21,4 @@ class BookShelf {
 }
 
 
-export const bookShelfStore = new BookShelf()
+export const bookShelfStore = new BookShelfStore()

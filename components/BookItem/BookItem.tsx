@@ -7,7 +7,7 @@ import Spacing from "../../constants/Spacing";
 import {FontAwesome5} from "@expo/vector-icons";
 import useColorScheme from "../../hooks/useColorScheme";
 import FontSize from "../../constants/FontSize";
-import BookItemProps from '../../models/BookItemProps'
+import BookItemProps from '../../models/BookItemProps.model'
 
 
 export default function BookItem(props: BookItemProps) {

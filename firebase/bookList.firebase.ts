@@ -12,13 +12,13 @@ import {
     where,
 } from 'firebase/firestore/lite';
 import {FIREBASE_API_KEY, FIREBASE_APP_ID, FIREBASE_MESSAAGING_SENDER_ID} from 'react-native-dotenv';
-import {Book} from "../models/Book";
-import {bookListStore} from '../store/bookList'
-import {getBookListCount} from './quantities'
+import {Book} from "../models/Book.model";
+import {bookListStore} from '../store/bookList.store'
+import {getBookListCount} from './quantities.firebase'
 import {toJS} from "mobx";
-import {bookDetailsStore} from "../store/bookDetails";
-import {profileStore} from "../store/profile";
-import {Comment} from '../models/Book'
+import {bookDetailsStore} from "../store/bookDetails.store";
+import {profileStore} from "../store/profile.store";
+import {Comment} from '../models/Book.model'
 
 const firebaseConfig = {
     apiKey: FIREBASE_API_KEY,

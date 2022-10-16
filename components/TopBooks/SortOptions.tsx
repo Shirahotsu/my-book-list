@@ -6,7 +6,7 @@ import useColorScheme from "../../hooks/useColorScheme";
 import {StyleSheet, TouchableHighlight} from "react-native";
 import Spacing from "../../constants/Spacing";
 import {useEffect} from "react";
-import {bookListStore} from '../../store/bookList'
+import {bookListStore} from '../../store/bookList.store'
 import {observer} from "mobx-react";
 
 export default function SortOptions(props: any) {

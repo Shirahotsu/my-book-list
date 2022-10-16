@@ -3,9 +3,8 @@ import { useToast } from "react-native-toast-notifications";
 
 import {Button, Text, View, TextInput} from '../components/Themed';
 import Spacing from "../constants/Spacing";
-import {login, register} from '../firebase/main'
+import {login, register} from '../firebase/main.firebase'
 import React, {useState} from "react";
-import {userStore} from "../store/user";
 
 export default function LogIn({navigation}: any) {
 

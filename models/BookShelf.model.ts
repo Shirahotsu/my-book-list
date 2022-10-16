@@ -1,4 +1,4 @@
-import {Book} from "./Book";
+import {Book} from "./Book.model";
 
 export interface BookShelfItem extends Book {
     pagesRead: number,

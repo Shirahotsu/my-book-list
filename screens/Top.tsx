@@ -4,12 +4,12 @@ import {Button, Text, View} from '../components/Themed';
 import BookItem from "../components/BookItem/BookItem";
 import React, {useEffect} from "react";
 import Spacing from "../constants/Spacing";
-import {loadFirst10Books, loadAdditional10Books} from "../firebase/bookList";
-import {bookListStore} from '../store/bookList'
+import {loadFirst10Books, loadAdditional10Books} from "../firebase/bookList.firebase";
+import {bookListStore} from '../store/bookList.store'
 import {observer} from "mobx-react";
 import SortOptions from "../components/TopBooks/SortOptions";
-import {Book} from "../models/Book";
-import { bookDetailsStore} from "../store/bookDetails";
+import {Book} from "../models/Book.model";
+import { bookDetailsStore} from "../store/bookDetails.store";
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
 

@@ -4,8 +4,8 @@ import {Text, View, Button, TextInput} from '../Themed';
 import Spacing from "../../constants/Spacing";
 import FontSize from "../../constants/FontSize";
 import React, {useEffect, useState} from "react";
-import {loadProfileDetails, updateUserName} from '../../firebase/profile'
-import {profileStore} from "../../store/profile";
+import {loadProfileDetails, updateUserName} from '../../firebase/profile.firebase'
+import {profileStore} from "../../store/profile.store";
 import {Observer} from "mobx-react";
 import Modal from "../Modal";
 

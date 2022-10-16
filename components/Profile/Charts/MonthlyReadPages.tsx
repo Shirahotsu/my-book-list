@@ -9,11 +9,11 @@ import FontSize from "../../../constants/FontSize";
 import Colors from "../../../constants/Colors";
 import {Direction} from "react-native-calendars/src/types";
 import {LocaleConfig} from 'react-native-calendars';
-import {loadProfileDetails} from "../../../firebase/profile";
-import {profileStore} from "../../../store/profile";
+import {loadProfileDetails} from "../../../firebase/profile.firebase";
+import {profileStore} from "../../../store/profile.store";
 import {observer} from "mobx-react";
 import {observe, toJS} from "mobx";
-import {DailyReadPages} from "../../../models/Profile";
+import {DailyReadPages} from "../../../models/Profile.model";
 import Spacing from "../../../constants/Spacing";
 
 const INITIAL_DATE = new Date();

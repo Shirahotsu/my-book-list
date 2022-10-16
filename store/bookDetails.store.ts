@@ -1,7 +1,7 @@
 import {action, computed, makeObservable, observable} from "mobx";
-import {Book} from "../models/Book";
+import {Book} from "../models/Book.model";
 
-class BookDetails {
+class BookDetailsStore {
     bookDetails: Book | null = null
     isInBookshelfView: boolean = false
 
@@ -27,4 +27,4 @@ class BookDetails {
     }
 }
 
-export const bookDetailsStore = new BookDetails()
+export const bookDetailsStore = new BookDetailsStore()

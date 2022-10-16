@@ -12,9 +12,9 @@ import {
     Legend,
 } from 'chart.js';
 import React, {useEffect, useRef, useState} from "react";
-import {loadProfileDetails} from "../../../firebase/profile";
-import {profileStore} from "../../../store/profile";
-import {DailyReadPages} from "../../../models/Profile";
+import {loadProfileDetails} from "../../../firebase/profile.firebase";
+import {profileStore} from "../../../store/profile.store";
+import {DailyReadPages} from "../../../models/Profile.model";
 import {toJS} from "mobx";
 import {reforwardRef} from "react-chartjs-2/dist/utils";
 

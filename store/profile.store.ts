@@ -1,5 +1,5 @@
 import {action, computed, makeObservable, observable} from "mobx";
-import {Profile as ProfileInterface, DailyReadPages} from '../models/Profile'
+import {Profile as ProfileInterface, DailyReadPages} from '../models/Profile.model'
 
 const emptyUserProfile:ProfileInterface = {
     userId:'',
@@ -33,7 +33,7 @@ const emptyUserProfile:ProfileInterface = {
     level: 1,
 }
 
-export class Profile {
+export class ProfileStore {
     profile: ProfileInterface = emptyUserProfile
 
     constructor() {
@@ -64,4 +64,4 @@ export class Profile {
 
 }
 
-export const profileStore = new Profile()
+export const profileStore = new ProfileStore()

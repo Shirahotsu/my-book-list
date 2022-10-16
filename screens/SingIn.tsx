@@ -2,8 +2,8 @@ import {ScrollView, StyleSheet} from 'react-native';
 
 import {Button, Text, View, TextInput} from '../components/Themed';
 import Spacing from "../constants/Spacing";
-import { register} from '../firebase/main'
-import {createProfileDetails, loadProfileDetails} from '../firebase/profile'
+import { register} from '../firebase/main.firebase'
+import {createProfileDetails, loadProfileDetails} from '../firebase/profile.firebase'
 import React, { useState } from 'react';
 import {useToast} from "react-native-toast-notifications";
 

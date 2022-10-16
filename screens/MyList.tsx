@@ -6,11 +6,11 @@ import Spacing from '../constants/Spacing'
 import {RootTabScreenProps} from '../types';
 import BookItem from "../components/BookItem/BookItem";
 import React, {useEffect} from 'react';
-import BookItemProps from "../models/BookItemProps";
-import {loadBooksInMyBookshelf} from "../firebase/bookShelf";
+import BookItemProps from "../models/BookItemProps.model";
+import {loadBooksInMyBookshelf} from "../firebase/bookShelf.firebase";
 import {observer} from "mobx-react";
-import {bookDetailsStore} from "../store/bookDetails";
-import {bookShelfStore} from "../store/bookShelf";
+import {bookDetailsStore} from "../store/bookDetails.store";
+import {bookShelfStore} from "../store/bookShelf.store";
 import {backgroundColor} from "react-native-calendars/src/style";
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";

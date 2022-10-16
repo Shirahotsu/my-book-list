@@ -3,12 +3,12 @@ import {SafeAreaView, ScrollView, StyleSheet, TouchableHighlight} from 'react-na
 import {Button, Text, TextInput, View} from '../components/Themed';
 import {RootTabScreenProps} from '../types';
 import React, {useEffect, useState} from "react";
-import {loadAdditional10Books, loadAdditional50SearchResults, loadFirst50SearchResults} from "../firebase/bookList";
+import {loadAdditional10Books, loadAdditional50SearchResults, loadFirst50SearchResults} from "../firebase/bookList.firebase";
 import {observer} from "mobx-react";
-import {bookListStore} from "../store/bookList";
+import {bookListStore} from "../store/bookList.store";
 import BookItem from "../components/BookItem/BookItem";
-import {Book} from "../models/Book";
-import {bookDetailsStore} from "../store/bookDetails";
+import {Book} from "../models/Book.model";
+import {bookDetailsStore} from "../store/bookDetails.store";
 import Spacing from "../constants/Spacing";
 import {FontAwesome5} from "@expo/vector-icons";
 import FontSize from "../constants/FontSize";

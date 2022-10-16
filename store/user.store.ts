@@ -6,7 +6,7 @@ interface UserInterface {
     isLogged: boolean
 }
 
-class User {
+class UserStore {
     user:UserInterface = {
         accessToken:'',
         uid:'',
@@ -41,4 +41,4 @@ class User {
 
 }
 
-export const userStore = new User()
+export const userStore = new UserStore()

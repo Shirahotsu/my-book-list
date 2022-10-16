@@ -2,7 +2,6 @@ import {Image, Platform, ScrollView, StyleSheet} from 'react-native';
 
 import {Button, Text, View} from '../components/Themed';
 
-import BookDetailsInterface from "../models/BookDetails";
 import FontSize from "../constants/FontSize";
 import Spacing from "../constants/Spacing";
 import {FontAwesome5} from "@expo/vector-icons";
@@ -11,27 +10,12 @@ import Title from "../components/BookItem/Title";
 import useColorScheme from "../hooks/useColorScheme";
 import BadgeThemed from "../components/BadgeThemed";
 import {observer} from "mobx-react";
-import {bookDetailsStore} from "../store/bookDetails";
+import {bookDetailsStore} from "../store/bookDetails.store";
 import {convertDateToDashedDate, convertSecondsToDate} from "../utils/date";
 import React, {ChangeEvent, useEffect, useState} from "react";
-import {Book} from "../models/Book";
-import {addComment} from "../firebase/bookList";
+import {Book} from "../models/Book.model";
+import {addComment} from "../firebase/bookList.firebase";
 
-const bookDetailsMock: BookDetailsInterface = {
-    isInMyList: false,
-    title: 'Harry potter',
-    imgUrl: '',
-    myScore: 9,
-    pagesRead: 234,
-    releaseDate: new Date(),
-    categories: ['Fantasy', 'Novel', 'Adventure'],
-    description: 'Harry jest jedyną osobą, której udaje się przeżyć spotkanie ze złym czarnoksiężnikiem - Lordem Voldemortem. W zdarzeniu jednak giną jego rodzice. Osierocony trafia pod opiekę ciotki Petunii i wuja Vernona. Podczas swoich 11 urodzin dowiaduje się, że odziedziczył po rodzicach magiczne zdolności. Wkrótce trafia do szkoły dla czarodziejów',
-    booksRead: 1890325,
-    usersScore: {
-        users: 280334,
-        score: 8.34
-    }
-}
 
 function MainInfoButtons({isInBookshelfView, myScore, pagesRead}: any) {
     if (!isInBookshelfView) {
@@ -73,22 +57,6 @@ export default function BookDetails() {
     }
 
 
-    const details = {
-        isInMyList: bookDetailsMock.isInMyList ?? false,
-        title: bookDetailsMock.title ?? '',
-        imgUrl: bookDetailsMock.imgUrl ?? '',
-        myScore: bookDetailsMock.myScore ?? 0,
-        pagesRead: bookDetailsMock.pagesRead ?? 0,
-        releaseDate: bookDetailsMock.releaseDate ?? '',
-        categories: bookDetailsMock.categories ?? [],
-        description: bookDetailsMock.description ?? '',
-        booksRead: bookDetailsMock.booksRead ?? '',
-        usersScore: {
-            users: bookDetailsMock.usersScore?.users ?? 0,
-            score: bookDetailsMock.usersScore?.score ?? 0
-        }
-    }
-
     const BookDetailsView = () => {
         return (bookDetails &&
             <>
@@ -115,7 +83,7 @@ export default function BookDetails() {
                                 <View style={s.bookIcon}>
                                     <FontAwesome5 size={FontSize.h4} name="star" color={Colors[colorScheme].text}/>
                                 </View>
-                                <Title>{details.usersScore.score}</Title>
+                                {/*<Title>{details.usersScore.score}</Title>*/}
                             </View>
                             <View style={s.numericInfo}>
                                 <View style={s.bookIcon}>

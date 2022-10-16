@@ -1,4 +1,4 @@
-export default interface BookItemProps{
+export default interface BookItemProps {
     title: string
     bookCover?: string
     isFromMyBookList?: boolean

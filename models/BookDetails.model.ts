@@ -1,6 +1,6 @@
-import {BookStatus} from "./BookShelf";
+import {BookStatus} from "./BookShelf.model";
 
-interface BookDetails {
+export interface BookDetails {
     isInMyList: boolean,
     title: string,
     imgUrl?: string,
@@ -14,7 +14,7 @@ interface BookDetails {
     status?: BookStatus,
 }
 
-interface UserScore{
+export interface UserScore{
     score?: number,
     users?: number
 }

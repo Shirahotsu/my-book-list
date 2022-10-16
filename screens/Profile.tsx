@@ -4,8 +4,8 @@ import {Button, Text, View, ScrollView} from '../components/Themed';
 import BasicInfo from "../components/Profile/BasicInfo";
 import Spacing from "../constants/Spacing";
 import PagesRead from "../components/Profile/PagesRead";
-import {login, register, logOut} from '../firebase/main'
-import {userStore} from "../store/user";
+import {login, register, logOut} from '../firebase/main.firebase'
+import {userStore} from "../store/user.store";
 import {useToast} from "react-native-toast-notifications";
 
 export default function Profile() {

@@ -25,7 +25,7 @@ import LogIn from '../screens/LogIn'
 import SignIn from "../screens/SingIn";
 import {observer} from "mobx-react";
 import {useState} from "react";
-import {userStore} from "../store/user";
+import {userStore} from "../store/user.store";
 import {Button} from "../components/Themed";
 
 const isLoggedIn = false

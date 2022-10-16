@@ -1,13 +1,13 @@
-import {Book} from "../models/Book";
+import {Book} from "../models/Book.model";
 import {action, computed, makeObservable, observable} from "mobx";
-import {loadFirst10Books} from "../firebase/bookList";
+import {loadFirst10Books} from "../firebase/bookList.firebase";
 
 const INITIAL_SORT_OPTION = {
     sortBy: 'totalScore',
     direction: 'desc'
 }
 
-class BookList {
+class BookListStore {
     bookList: Book[] = []
     lastVisibleDoc: any = null
     loadMoreBooks: boolean = true
@@ -78,4 +78,4 @@ class BookList {
 
 }
 
-export const bookListStore = new BookList()
+export const bookListStore = new BookListStore()

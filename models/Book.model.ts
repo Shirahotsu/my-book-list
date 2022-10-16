@@ -1,4 +1,4 @@
-import {BookStatus} from "./BookShelf";
+import {BookStatus} from "./BookShelf.model";
 
 export interface Book {
     comments: Comment[]

@@ -5,6 +5,7 @@ import firebase from "firebase/compat";
 import {UserCredential, signOut, getIdToken } from 'firebase/auth'
 import {getUserLoginError} from '../utils/responseErrors'
 import {userStore} from "../store/user.store";
+// @ts-ignore
 import {FIREBASE_API_KEY, FIREBASE_APP_ID, FIREBASE_MESSAAGING_SENDER_ID} from 'react-native-dotenv';
 const firebaseConfig = {
     apiKey: FIREBASE_API_KEY,

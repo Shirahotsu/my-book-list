@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs, doc, getDoc, addDoc, setDoc, updateDoc } from 'firebase/firestore/lite';
 import {userStore} from "../store/user.store";
+// @ts-ignore
 import {FIREBASE_API_KEY, FIREBASE_APP_ID, FIREBASE_MESSAAGING_SENDER_ID} from 'react-native-dotenv';
 import {Profile} from "../models/Profile.model";
 import {profileStore} from "../store/profile.store";

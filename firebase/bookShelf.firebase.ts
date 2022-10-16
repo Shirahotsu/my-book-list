@@ -13,6 +13,7 @@ import {
     FieldPath,
     documentId
 } from 'firebase/firestore/lite';
+// @ts-ignore
 import {FIREBASE_API_KEY, FIREBASE_APP_ID, FIREBASE_MESSAAGING_SENDER_ID} from 'react-native-dotenv';
 import {Book} from "../models/Book.model";
 import {bookListStore} from '../store/bookList.store'

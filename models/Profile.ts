@@ -30,7 +30,8 @@ export interface BasicAchievement {
 export interface Book {
     bookId: string,
     pagesRead: number,
-    status: BookStatus
+    status: BookStatus,
+    myScore: number
 }
 
 export interface DailyReadPages {

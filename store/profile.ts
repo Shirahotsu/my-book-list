@@ -41,12 +41,17 @@ export class Profile {
             profile:observable,
             setProfile: action,
             changeUserName: action,
-            dailyReadPages: computed
+            dailyReadPages: computed,
+            bookshelfBooksIds: computed
         })
     }
 
     get dailyReadPages():DailyReadPages[]{
         return this.profile.dailyReadPages
+    }
+
+    get bookshelfBooksIds ():string[] {
+        return this.profile.bookShelf.map(book=>book.bookId)
     }
 
     setProfile(newProfile:ProfileInterface){

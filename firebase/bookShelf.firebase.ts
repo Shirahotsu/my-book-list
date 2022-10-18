@@ -1,28 +1,13 @@
 import {initializeApp} from "firebase/app";
-import {
-    getFirestore,
-    collection,
-    query,
-    orderBy,
-    limit,
-    getDocs,
-    startAfter,
-    doc,
-    updateDoc,
-    where,
-    FieldPath,
-    documentId
-} from 'firebase/firestore/lite';
+import {collection, doc, getDocs, getFirestore, query, updateDoc, where} from 'firebase/firestore/lite';
 // @ts-ignore
 import {FIREBASE_API_KEY, FIREBASE_APP_ID, FIREBASE_MESSAAGING_SENDER_ID} from 'react-native-dotenv';
-import {Book} from "../models/Book.model";
-import {bookListStore} from '../store/bookList.store'
-import {getBookListCount} from './quantities.firebase'
-import {toJS} from "mobx";
+import {Book, Score} from "../models/Book.model";
 import {bookDetailsStore} from "../store/bookDetails.store";
 import {profileStore} from "../store/profile.store";
-import {Comment} from '../models/Book.model'
 import {bookShelfStore} from "../store/bookShelf.store";
+import {BookStatus} from "../models/BookShelf.model";
+import {userStore} from "../store/user.store";
 
 const firebaseConfig = {
     apiKey: FIREBASE_API_KEY,
@@ -38,13 +23,13 @@ const db = getFirestore(app);
 
 const loadBooksInMyBookshelf = async () => {
     const bookshelfBooksIds = profileStore.bookshelfBooksIds
-    if(bookshelfBooksIds.length <1){
+    if (bookshelfBooksIds.length < 1) {
         return
     }
     const bookshelfBookDetails = {}
     profileStore.profile.bookShelf.forEach(book => {
         Object.assign(bookshelfBookDetails, {
-            [book.bookId]: {
+            [book.id]: {
                 pagesRead: book.pagesRead,
                 status: book.status,
                 myScore: book.myScore,
@@ -61,6 +46,46 @@ const loadBooksInMyBookshelf = async () => {
     bookShelfStore.setBookShelf(bookShelf)
 }
 
+const changeBookStatus = async (bookId: string, status: BookStatus) => {
+    const userId = userStore.user.uid
+    const newBookshelf = [...bookShelfStore.bookShelf].map(book => {
+        if (book.id === bookId) {
+            book.status = status
+        }
+        return book
+    })
+    const docRef = doc(db, `profile/${userId}`);
+    try {
+        await updateDoc(docRef, {bookShelf: newBookshelf})
+        bookDetailsStore.updateStatus(status)
+        profileStore.updateProfileBookshelf(newBookshelf)
+        return true;
+    } catch (e) {
+        return false
+    }
+}
+
+const changeBookScore = async (bookId: string, score: Score) => {
+    const userId = userStore.user.uid
+    const newBookshelf = [...bookShelfStore.bookShelf].map(book => {
+        if (book.id === bookId) {
+            book.myScore = score
+        }
+        return book
+    })
+    const docRef = doc(db, `profile/${userId}`);
+    try {
+        await updateDoc(docRef, {bookShelf: newBookshelf})
+        bookDetailsStore.updateMyScore(score)
+        profileStore.updateProfileBookshelf(newBookshelf)
+        return true;
+    } catch (e) {
+        return false
+    }
+}
+
 export {
-    loadBooksInMyBookshelf
+    loadBooksInMyBookshelf,
+    changeBookStatus,
+    changeBookScore
 }

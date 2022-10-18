@@ -14,7 +14,7 @@ export interface Book {
     id: string
     released: Released,
     pages: number,
-    myScore?:  0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10,
+    myScore?:  Score,
     pagesRead?: number,
     status?: BookStatus,
 }
@@ -35,3 +35,5 @@ export interface Released {
     seconds: number,
     nanoseconds?: number
 }
+
+export type Score = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10

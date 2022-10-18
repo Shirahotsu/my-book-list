@@ -1,5 +1,6 @@
 import {action, computed, makeObservable, observable} from "mobx";
 import {Profile as ProfileInterface, DailyReadPages} from '../models/Profile.model'
+import {BookShelfItem} from "../models/BookShelf.model";
 
 const emptyUserProfile:ProfileInterface = {
     userId:'',
@@ -41,6 +42,7 @@ export class ProfileStore {
             profile:observable,
             setProfile: action,
             changeUserName: action,
+            updateProfileBookshelf:action,
             dailyReadPages: computed,
             bookshelfBooksIds: computed
         })
@@ -51,7 +53,7 @@ export class ProfileStore {
     }
 
     get bookshelfBooksIds ():string[] {
-        return this.profile.bookShelf.map(book=>book.bookId)
+        return this.profile.bookShelf.map(book=>book.id)
     }
 
     setProfile(newProfile:ProfileInterface){
@@ -60,6 +62,10 @@ export class ProfileStore {
 
     changeUserName(newUserName:string){
         this.profile.userName = newUserName
+    }
+
+    updateProfileBookshelf(newBookshelf: BookShelfItem[]){
+        this.profile.bookShelf = newBookshelf
     }
 
 }

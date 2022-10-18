@@ -1,4 +1,4 @@
-import {Image, Platform, ScrollView, StyleSheet} from 'react-native';
+import {Image, ScrollView, StyleSheet} from 'react-native';
 
 import {Button, Text, View} from '../components/Themed';
 
@@ -12,23 +12,72 @@ import BadgeThemed from "../components/BadgeThemed";
 import {observer} from "mobx-react";
 import {bookDetailsStore} from "../store/bookDetails.store";
 import {convertDateToDashedDate, convertSecondsToDate} from "../utils/date";
-import React, {ChangeEvent, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Book} from "../models/Book.model";
 import {addComment} from "../firebase/bookList.firebase";
 import {getAverageScore} from "../utils/score";
+import {BookStatus} from "../models/BookShelf.model";
+import Dropdown from "../components/Dropdown";
+import {changeBookScore, changeBookStatus} from '../firebase/bookShelf.firebase'
 
+const statusOptions = [
+    {
+        label: 'Do przeczytania',
+        value: BookStatus.PlanToRead
+    },
+    {
+        label: 'W trakcie',
+        value: BookStatus.Reading
+    },
+    {
+        label: 'Przeczytano',
+        value: BookStatus.Completed
+    }
+]
 
-function MainInfoButtons({isInBookshelfView, myScore, pagesRead}: any) {
-    if (!isInBookshelfView) {
-        return <Button title={'ADD TO MY LIST'} onPress={() => console.log('%c ES', 'color:fuchsia')}/>
-    } else return (<>
-        <Button title={'READING'} onPress={() => console.log('%c ES', 'color:fuchsia')}/>
-        <Button title={'MY SCORE: ' + bookDetailsStore.bookDetails?.myScore}
-                onPress={() => console.log('%c ES', 'color:fuchsia')}/>
-        <Button title={'PAGES READ: ' + bookDetailsStore.bookDetails?.pagesRead}
-                onPress={() => console.log('%c ES', 'color:fuchsia')}/>
-    </>)
-}
+const scoreOptions = [
+    {
+        label: '(1) Okropne',
+        value: 1
+    },
+    {
+        label: '(2) Bardzo złe',
+        value: 2
+    },
+    {
+        label: '(3) Złe',
+        value: 3
+    },
+    {
+        label: '(4) Słabe',
+        value: 4
+    },
+    {
+        label: '(5) Średnie',
+        value: 5
+    },
+    {
+        label: '(6) Może być',
+        value: 6
+    },
+    {
+        label: '(7) Dobre',
+        value: 7
+    },
+    {
+        label: '(8) Bardzo dobre',
+        value: 8
+    },
+    {
+        label: '(9) Super',
+        value: 9
+    },
+    {
+        label: '(10) Arcydzieło',
+        value: 10
+    },
+]
+
 
 export default function BookDetails() {
     const colorScheme = useColorScheme();
@@ -36,11 +85,34 @@ export default function BookDetails() {
     const [bookDetails, setBookDetails] = useState<Book | null>(null)
     const [isInBookshelfView, setIsInBookshelfView] = useState(false)
     const textarea = React.createRef();
-
+    const [myScore, setMyScore] = useState(null)
+    const [bookStatus, setBookStatus] = useState(null)
     useEffect(() => {
         setBookDetails(bookDetailsStore.bookDetails)
         setIsInBookshelfView(bookDetailsStore.isInBookshelfView)
+        if (bookDetailsStore.isInBookshelfView) {
+            setInitialBookStatus()
+            setInitialScore()
+        }
     }, [])
+
+    const setInitialBookStatus = () => {
+        const value = bookDetailsStore.bookDetails?.status
+        if (value === undefined) return
+        const label = statusOptions.find(v => v.value === value)?.label
+        if(!label) return;
+        const bookStatus = {label,value}
+        setBookStatus(bookStatus)
+    }
+
+    const setInitialScore = () => {
+        const value = bookDetailsStore.bookDetails?.myScore
+        if (value === undefined) return
+        const label = scoreOptions.find(v => v.value === value)?.label
+        if(!label) return;
+        const myScore = {label, value}
+        setMyScore(myScore)
+    }
 
     const handleAddComment = async () => {
         const commentMessage = textarea.current.value
@@ -57,6 +129,41 @@ export default function BookDetails() {
         if (event.key === 'Enter') {
             handleAddComment()
         }
+    }
+
+
+    const handleChangeBookStatus = async (option) => {
+        const bookId = bookDetails?.id
+        changeBookStatus(bookId, option.value)
+    }
+
+    const handleChangeBookScore = (option) => {
+        const bookId = bookDetails?.id
+        changeBookScore(bookId, option.value)
+    }
+
+    const MainInfoButtons = ({isInBookshelfView}: any) => {
+        if (!isInBookshelfView) {
+            return <Button title={'ADD TO MY LIST'} onPress={() => console.log('%c ES', 'color:fuchsia')}/>
+        } else return (<>
+            <Dropdown
+                label="Wybierz status"
+                selectedOption={bookStatus ?? undefined}
+                data={statusOptions}
+                onSelect={v => handleChangeBookStatus(v)}
+            />
+
+            <Dropdown
+                label="Oceń"
+                selectedOption={myScore ?? undefined}
+                data={scoreOptions.reverse()}
+                onSelect={v => handleChangeBookScore(v)}
+            />
+
+            <Button title={'PAGES READ: ' + bookDetailsStore.bookDetails?.pagesRead}
+                    onPress={() => {
+                    }}/>
+        </>)
     }
 
 
@@ -86,7 +193,7 @@ export default function BookDetails() {
                                 <View style={s.bookIcon}>
                                     <FontAwesome5 size={FontSize.h4} name="star" color={Colors[colorScheme].text}/>
                                 </View>
-                                <Title>{getAverageScore(bookDetails.totalScore,bookDetails.scoreAmount)}</Title>
+                                <Title>{getAverageScore(bookDetails.totalScore, bookDetails.scoreAmount)}</Title>
                             </View>
                             <View style={s.numericInfo}>
                                 <View style={s.bookIcon}>
@@ -150,9 +257,10 @@ export default function BookDetails() {
                     }
                     {
                         bookDetailsStore.isInBookshelfView &&
-                            <View>
-                                <Button title={'Usuń z półki'} onPress={()=>{}}/>
-                            </View>
+                        <View>
+                            <Button title={'Usuń z półki'} onPress={() => {
+                            }}/>
+                        </View>
                     }
 
                 </View>
@@ -252,5 +360,17 @@ const s = StyleSheet.create({
     },
     spacer: {
         paddingVertical: Spacing.xs
+    },
+    buttonsView: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        marginTop: Spacing.md
+    },
+    optionsView: {
+        flexDirection: 'column',
+    },
+    option: {
+        width: '100%',
+        paddingVertical: Spacing.sm
     }
 });

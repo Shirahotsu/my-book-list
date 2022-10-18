@@ -28,7 +28,7 @@ export interface BasicAchievement {
 }
 
 export interface Book {
-    bookId: string,
+    id: string,
     pagesRead: number,
     status: BookStatus,
     myScore: number

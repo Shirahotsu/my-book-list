@@ -20,15 +20,7 @@ import {toJS} from "mobx";
 import {bookDetailsStore} from "../store/bookDetails.store";
 import {profileStore} from "../store/profile.store";
 import {Comment} from '../models/Book.model'
-
-const firebaseConfig = {
-    apiKey: FIREBASE_API_KEY,
-    authDomain: "my-book-list-a44ff.firebaseapp.com",
-    projectId: "my-book-list-a44ff",
-    storageBucket: "my-book-list-a44ff.appspot.com",
-    messagingSenderId: FIREBASE_MESSAAGING_SENDER_ID,
-    appId: FIREBASE_APP_ID
-};
+import {firebaseConfig} from "./firebaseConfig";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);

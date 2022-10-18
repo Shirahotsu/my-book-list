@@ -7,15 +7,7 @@ import {getUserLoginError} from '../utils/responseErrors'
 import {userStore} from "../store/user.store";
 // @ts-ignore
 import {FIREBASE_API_KEY, FIREBASE_APP_ID, FIREBASE_MESSAAGING_SENDER_ID} from 'react-native-dotenv';
-const firebaseConfig = {
-    apiKey: FIREBASE_API_KEY,
-    authDomain: "my-book-list-a44ff.firebaseapp.com",
-    projectId: "my-book-list-a44ff",
-    storageBucket: "my-book-list-a44ff.appspot.com",
-    messagingSenderId: FIREBASE_MESSAAGING_SENDER_ID,
-    appId: FIREBASE_APP_ID
-};
-
+import {firebaseConfig} from "./firebaseConfig";
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 

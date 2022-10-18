@@ -1,4 +1,4 @@
-import React, {FC, ReactElement, useRef, useState} from 'react';
+import React, {FC, ReactElement, useEffect, useRef, useState} from 'react';
 import {FlatList, Modal, StyleSheet, TouchableOpacity, View,} from 'react-native';
 import {FontAwesome5} from "@expo/vector-icons";
 import FontSize from "../constants/FontSize";
@@ -7,13 +7,19 @@ import useColorScheme from "../hooks/useColorScheme";
 import {Text} from "./Themed";
 import Spacing from "../constants/Spacing";
 
+interface SelectedOption {
+    label: string;
+    value: any
+}
+
 interface Props {
     label: string;
     data: Array<{ label: string; value: any }>;
+    selectedOption?: SelectedOption
     onSelect: (item: { label: string; value: string }) => void;
 }
 
-const Dropdown: FC<Props> = ({label, data, onSelect}) => {
+const Dropdown: FC<Props> = ({label, data, onSelect, selectedOption}) => {
     const DropdownButton = useRef();
     const [visible, setVisible] = useState(false);
     const [selected, setSelected] = useState(undefined);
@@ -21,6 +27,12 @@ const Dropdown: FC<Props> = ({label, data, onSelect}) => {
     const [dropdownLeft, setDropdownLeft] = useState(0);
     const [dropdownWidth, setDropdownWidth] = useState(0);
     const colorScheme = useColorScheme();
+
+    useEffect(()=>{
+        if(selectedOption){
+            setSelected(selectedOption)
+        }
+    }, [])
 
     const toggleDropdown = (): void => {
         visible ? setVisible(false) : openDropdown();
@@ -54,7 +66,7 @@ const Dropdown: FC<Props> = ({label, data, onSelect}) => {
                     style={s.overlay}
                     onPress={() => setVisible(false)}
                 >
-                    <TouchableOpacity  onPress={() => setVisible(false)} style={[s.dropdown, {top: dropdownTop-35, left:dropdownLeft, width:dropdownWidth, height:35 }]}/>
+                    <TouchableOpacity onPress={() => setVisible(false)} style={[s.dropdown, {top: dropdownTop-35, left:dropdownLeft, width:dropdownWidth, height:35 }]}/>
                     <View style={[s.dropdown, {top: dropdownTop, left:dropdownLeft, width:dropdownWidth, backgroundColor: Colors[colorScheme].background }]}>
                         <FlatList
                             data={data}

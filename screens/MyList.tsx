@@ -15,13 +15,23 @@ import {backgroundColor} from "react-native-calendars/src/style";
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
 import {Book} from "../models/Book.model";
+import {loadProfileDetails} from "../firebase/profile.firebase";
+import {profileStore} from "../store/profile.store";
 
 export default function MyList({navigation}: RootTabScreenProps<'MyList'>) {
     const colorScheme = useColorScheme();
 
     useEffect(() => {
-        loadBooksInMyBookshelf()
+        loadInitialData()
     }, [])
+
+    const loadInitialData = async () => {
+        const userId = profileStore.profile.userId
+        if(!userId){
+            await loadProfileDetails()
+        }
+        await loadBooksInMyBookshelf()
+    }
 
     const handleOnBookItemClick = (book:Book) => {
         bookDetailsStore.setIsInBookshelfView(true)

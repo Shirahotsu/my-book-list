@@ -21,6 +21,8 @@ import {profileStore} from "../store/profile.store";
 export default function MyList({navigation}: RootTabScreenProps<'MyList'>) {
     const colorScheme = useColorScheme();
 
+
+
     useEffect(() => {
         loadInitialData()
     }, [])
@@ -36,7 +38,7 @@ export default function MyList({navigation}: RootTabScreenProps<'MyList'>) {
     const handleOnBookItemClick = (book:Book) => {
         bookDetailsStore.setIsInBookshelfView(true)
         bookDetailsStore.setBookDetails(book)
-        navigation.push('Details')
+        navigation.navigate('Details')
     }
 
     const BookshelfView = observer(() => {

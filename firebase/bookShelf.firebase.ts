@@ -10,13 +10,16 @@ import {BookStatus} from "../models/BookShelf.model";
 import {userStore} from "../store/user.store";
 import {firebaseConfig} from "./firebaseConfig";
 import {updateBookScore} from "./bookList.firebase";
+import {loadProfileDetails} from "./profile.firebase";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+
 const loadBooksInMyBookshelf = async () => {
     const bookshelfBooksIds = profileStore.bookshelfBooksIds
     if (bookshelfBooksIds.length < 1) {
+        bookShelfStore.clearBookshelf()
         return
     }
     const bookshelfBookDetails = {}
@@ -45,7 +48,7 @@ const changeBookStatus = async (bookId: string, status: BookStatus) => {
     let changeUserFinished = false
     const newBookshelf = [...bookShelfStore.bookShelf].map(book => {
         if (book.id === bookId) {
-            if(getIsComplationStatusChanged(book.status, status)){
+            if (getIsComplationStatusChanged(book.status, status)) {
                 usersFinished = getNewUsersFinishedNumber(status, usersFinished)
                 changeUserFinished = true
             }
@@ -57,7 +60,7 @@ const changeBookStatus = async (bookId: string, status: BookStatus) => {
     const bookDocRef = doc(db, `book/${bookId}`)
     try {
         await updateDoc(profileDocRef, {bookShelf: newBookshelf})
-        if(changeUserFinished){
+        if (changeUserFinished) {
             await updateDoc(bookDocRef, {usersFinished})
         }
         bookDetailsStore.updateStatus(status)
@@ -89,7 +92,7 @@ const changeBookScore = async (bookId: string, score: Score) => {
     }
 }
 
-const changeBookPagesRead = async (bookId:string, pagesRead:number) =>{
+const changeBookPagesRead = async (bookId: string, pagesRead: number) => {
     const userId = userStore.user.uid
     const newBookshelf = [...bookShelfStore.bookShelf].map(book => {
         if (book.id === bookId) {
@@ -108,17 +111,56 @@ const changeBookPagesRead = async (bookId:string, pagesRead:number) =>{
     }
 }
 
-const getIsComplationStatusChanged = (oldStatus:BookStatus, newStatus: BookStatus) => {
+const getIsComplationStatusChanged = (oldStatus: BookStatus, newStatus: BookStatus) => {
     return oldStatus === BookStatus.Completed ? (newStatus !== oldStatus) : (newStatus === BookStatus.Completed)
 }
 
-const getNewUsersFinishedNumber = (status:BookStatus, usersFinished:number):number => {
-    return status===BookStatus.Completed ? usersFinished+1 : usersFinished-1
+const getNewUsersFinishedNumber = (status: BookStatus, usersFinished: number): number => {
+    return status === BookStatus.Completed ? usersFinished + 1 : usersFinished - 1
+}
+
+const addToBookshelf = async (bookId: string) => {
+    try {
+
+        const userId = profileStore.profile.userId
+        if (!userId) {
+            await loadProfileDetails()
+        }
+        const bookshelfBook = {
+            pagesRead: 0,
+            status: null,
+            myScore: null,
+            id: bookId
+        }
+        const docRef = doc(db, `profile/${userId}`);
+        const newBookshelf = [...profileStore.profile.bookShelf, bookshelfBook]
+        await updateDoc(docRef, {bookShelf: newBookshelf})
+        profileStore.updateProfileBookshelf(newBookshelf)
+        return true
+    } catch (e) {
+        return false
+    }
+}
+
+const removeFromBookshelf = async (bookId: string) => {
+    try {
+        const userId = profileStore.profile.userId
+        const docRef = doc(db, `profile/${userId}`);
+        const newBookshelf = [...profileStore.profile.bookShelf].filter(book=>book.id!==bookId)
+        await updateDoc(docRef, {bookShelf: newBookshelf})
+        profileStore.updateProfileBookshelf(newBookshelf)
+        await loadBooksInMyBookshelf()
+        return true
+    } catch (e) {
+        return false
+    }
 }
 
 export {
     loadBooksInMyBookshelf,
     changeBookStatus,
     changeBookScore,
-    changeBookPagesRead
+    changeBookPagesRead,
+    addToBookshelf,
+    removeFromBookshelf
 }

@@ -1,10 +1,9 @@
-import {Image, ScrollView, StyleSheet, TextInput} from 'react-native';
+import {Image, ScrollView, StyleSheet, TextInput, View as ViewRN} from 'react-native';
 
 import {Button, Text, View} from '../components/Themed';
 
 import FontSize from "../constants/FontSize";
 import Spacing from "../constants/Spacing";
-import {View as ViewRN} from 'react-native'
 import {FontAwesome5} from "@expo/vector-icons";
 import Colors from "../constants/Colors";
 import Title from "../components/BookItem/Title";
@@ -19,8 +18,17 @@ import {addComment} from "../firebase/bookList.firebase";
 import {getAverageScore} from "../utils/score";
 import {BookStatus} from "../models/BookShelf.model";
 import Dropdown from "../components/Dropdown";
-import {changeBookPagesRead, changeBookScore, changeBookStatus} from '../firebase/bookShelf.firebase'
+import {
+    addToBookshelf,
+    changeBookPagesRead,
+    changeBookScore,
+    changeBookStatus,
+    removeFromBookshelf
+} from '../firebase/bookShelf.firebase'
 import {useToast} from "react-native-toast-notifications";
+import {profileStore} from "../store/profile.store";
+import {loadProfileDetails} from "../firebase/profile.firebase";
+import {RootTabScreenProps} from "../types";
 
 const statusOptions = [
     {
@@ -81,7 +89,7 @@ const scoreOptions = [
 ]
 
 
-export default function BookDetails() {
+export default function BookDetails({navigation}: RootTabScreenProps<'MyBookShelf'>) {
     const colorScheme = useColorScheme();
     const [comment, setComment] = useState('');
     const [bookDetails, setBookDetails] = useState<Book | null>(null)
@@ -90,6 +98,7 @@ export default function BookDetails() {
     const [myScore, setMyScore] = useState(null)
     const [bookStatus, setBookStatus] = useState(null)
     const [pagesRead, setPagesRead] = useState('0')
+    const [isBookInBookshelf, setIsBookInBookshelf] = useState(false)
     const textInput = createRef()
     const toast = useToast();
 
@@ -101,14 +110,15 @@ export default function BookDetails() {
             setInitialScore()
             setInitialPagesRead()
         }
+        setInitialIsBookInBookshelf()
     }, [])
 
     const setInitialBookStatus = () => {
         const value = bookDetailsStore.bookDetails?.status
         if (value === undefined) return
         const label = statusOptions.find(v => v.value === value)?.label
-        if(!label) return;
-        const bookStatus = {label,value}
+        if (!label) return;
+        const bookStatus = {label, value}
         setBookStatus(bookStatus)
     }
 
@@ -116,7 +126,7 @@ export default function BookDetails() {
         const value = bookDetailsStore.bookDetails?.myScore
         if (value === undefined) return
         const label = scoreOptions.find(v => v.value === value)?.label
-        if(!label) return;
+        if (!label) return;
         const myScore = {label, value}
         setMyScore(myScore)
     }
@@ -124,6 +134,16 @@ export default function BookDetails() {
     const setInitialPagesRead = () => {
         const value = bookDetailsStore.bookDetails?.pagesRead
         setPagesRead(String(value) ?? '0')
+    }
+
+    const setInitialIsBookInBookshelf = async () => {
+        const userId = profileStore.profile.userId
+        if (!userId) {
+            await loadProfileDetails()
+        }
+        const bookshelfBooksIds = profileStore.bookshelfBooksIds
+        const isBookInBookshelf = bookshelfBooksIds.includes(bookDetailsStore.bookDetails?.id) || false
+        setIsBookInBookshelf(isBookInBookshelf)
     }
 
     const handleAddComment = async () => {
@@ -145,17 +165,17 @@ export default function BookDetails() {
 
     const handleOnPagesReadInputBlur = async () => {
         const pagesRead = parseInt(textInput.current.value)
-        if(pagesRead >=0 && pagesRead <= bookDetails.pages){
-            const response = await changeBookPagesRead( bookDetails?.id, pagesRead)
-            if(response){
-                toast.show('Zmieniono', {type:'success'})
+        if (pagesRead >= 0 && pagesRead <= bookDetails.pages) {
+            const response = await changeBookPagesRead(bookDetails?.id, pagesRead)
+            if (response) {
+                toast.show('Zmieniono', {type: 'success'})
             } else {
                 textInput.current.value = bookDetails?.pagesRead
-                toast.show('Wystąpił nieoczekiwany błąd', {type:'danger'})
+                toast.show('Wystąpił nieoczekiwany błąd', {type: 'danger'})
             }
         } else {
             textInput.current.value = bookDetails?.pagesRead
-            toast.show('Błędne wartości', {type:'danger'})
+            toast.show('Błędne wartości', {type: 'danger'})
         }
     }
 
@@ -168,9 +188,35 @@ export default function BookDetails() {
         changeBookScore(bookDetails?.id, option.value)
     }
 
+    const addBookToBookShelf = async () => {
+        const result = await addToBookshelf(bookDetails.id)
+        if (result){
+            setIsBookInBookshelf(true)
+            toast.show('Dodano książkę', {type: 'success'})
+        }  else {
+            toast.show('Wystąpił nieoczekiwany błąd', {type: 'danger'})
+        }
+    }
+
+    const removeBookFromBookshelf = async () => {
+        const result = await removeFromBookshelf(bookDetails.id)
+        if (result){
+            navigation.navigate('MyBookShelf')
+        }  else {
+            toast.show('Wystąpił nieoczekiwany błąd', {type: 'danger'})
+        }
+    }
+
     const MainInfoButtons = ({isInBookshelfView}: any) => {
         if (!isInBookshelfView) {
-            return <Button title={'ADD TO MY LIST'} onPress={() => console.log('%c ES', 'color:fuchsia')}/>
+            return (
+                <>
+                    {isBookInBookshelf
+                        ? <Text>Książka znajduję się już na Twojej półce :)</Text>
+                        : <Button title={'Dodaj na półkę'} onPress={() => addBookToBookShelf()}/>
+                    }
+                </>
+            )
         } else return (<>
             <Dropdown
                 label="Wybierz status"
@@ -195,7 +241,7 @@ export default function BookDetails() {
                             ref={textInput}
                             style={{width: 30, color: Colors[colorScheme].text, borderWidth: 0}}
                             defaultValue={pagesRead}
-                            onBlur={()=>handleOnPagesReadInputBlur()}
+                            onBlur={() => handleOnPagesReadInputBlur()}
                         />
                         <Text> / {bookDetails?.pages}</Text>
                     </ViewRN>
@@ -205,8 +251,8 @@ export default function BookDetails() {
         </>)
     }
 
-    const BookScoreAndPagesView = observer(()=>{
-        return(
+    const BookScoreAndPagesView = observer(() => {
+        return (
             <View style={s.scoreContainer}>
 
                 <View>
@@ -254,7 +300,7 @@ export default function BookDetails() {
                             <Image style={s.mainInfoImage} source={require('../assets/images/book-img-1.jpg')}/>
                         </View>
                         <View style={s.mainInfoContent}>
-                            <MainInfoButtons isInBookshelfView={isInBookshelfView} />
+                            <MainInfoButtons isInBookshelfView={isInBookshelfView}/>
                         </View>
                     </View>
 
@@ -303,8 +349,7 @@ export default function BookDetails() {
                     {
                         bookDetailsStore.isInBookshelfView &&
                         <View>
-                            <Button title={'Usuń z półki'} onPress={() => {
-                            }}/>
+                            <Button title={'Usuń z półki'} onPress={() => removeBookFromBookshelf()}/>
                         </View>
                     }
 
@@ -423,8 +468,8 @@ const s = StyleSheet.create({
         fontWeight: '500',
         textTransform: 'uppercase',
         height: 35,
-        flexDirection:'row',
-        alignItems:"center",
+        flexDirection: 'row',
+        alignItems: "center",
         justifyContent: "center"
     }
 });

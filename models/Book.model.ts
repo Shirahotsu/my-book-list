@@ -14,9 +14,9 @@ export interface Book {
     id: string
     released: Released,
     pages: number,
-    myScore?:  Score,
+    myScore?:  Score| null,
     pagesRead?: number,
-    status?: BookStatus,
+    status?: BookStatus | null,
 }
 
 export interface Comment {

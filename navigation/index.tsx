@@ -102,7 +102,7 @@ const MyBookshelfStack = createNativeStackNavigator();
 
 function MyBookshelfStackScreen({navigation}:any) {
     return (
-        <MyBookshelfStack.Navigator initialRouteName="Search">
+        <MyBookshelfStack.Navigator initialRouteName="MyBookShelf">
             <MyBookshelfStack.Screen name="MyBookShelf" component={MyList} />
             <MyBookshelfStack.Screen  name="Details" component={BookDetails} />
         </MyBookshelfStack.Navigator>

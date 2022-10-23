@@ -7,12 +7,17 @@ class BookShelfStore {
     constructor() {
         makeObservable(this, {
             bookShelf:observable,
-            setBookShelf: action
+            setBookShelf: action,
+            clearBookshelf: action
         })
     }
 
     setBookShelf(bookShelf: BookShelfItem[]) {
         this.bookShelf = bookShelf
+    }
+
+    clearBookshelf() {
+        this.bookShelf = []
     }
 
     loadBookShelf(){

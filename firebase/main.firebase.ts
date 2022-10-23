@@ -1,13 +1,19 @@
-import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
-import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
-import firebase from "firebase/compat";
-import {UserCredential, signOut, getIdToken } from 'firebase/auth'
+import {initializeApp} from "firebase/app";
+import {
+    createUserWithEmailAndPassword,
+    getAuth,
+    onAuthStateChanged,
+    signInWithEmailAndPassword,
+    signOut,
+    UserCredential
+} from "firebase/auth";
+import {getFirestore} from 'firebase/firestore/lite';
 import {getUserLoginError} from '../utils/responseErrors'
 import {userStore} from "../store/user.store";
 // @ts-ignore
 import {FIREBASE_API_KEY, FIREBASE_APP_ID, FIREBASE_MESSAAGING_SENDER_ID} from 'react-native-dotenv';
 import {firebaseConfig} from "./firebaseConfig";
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 

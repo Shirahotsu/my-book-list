@@ -76,8 +76,28 @@ const changeBookScore = async (bookId: string, score: Score) => {
     }
 }
 
+const changeBookPagesRead = async (bookId:string, pagesRead:number) =>{
+    const userId = userStore.user.uid
+    const newBookshelf = [...bookShelfStore.bookShelf].map(book => {
+        if (book.id === bookId) {
+            book.pagesRead = pagesRead
+        }
+        return book
+    })
+    const docRef = doc(db, `profile/${userId}`);
+    try {
+        await updateDoc(docRef, {bookShelf: newBookshelf})
+        bookDetailsStore.updatePagesRead(pagesRead)
+        profileStore.updateProfileBookshelf(newBookshelf)
+        return true;
+    } catch (e) {
+        return false
+    }
+}
+
 export {
     loadBooksInMyBookshelf,
     changeBookStatus,
-    changeBookScore
+    changeBookScore,
+    changeBookPagesRead
 }

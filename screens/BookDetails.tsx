@@ -1,9 +1,10 @@
-import {Image, ScrollView, StyleSheet} from 'react-native';
+import {Image, ScrollView, StyleSheet, TextInput} from 'react-native';
 
 import {Button, Text, View} from '../components/Themed';
 
 import FontSize from "../constants/FontSize";
 import Spacing from "../constants/Spacing";
+import {View as ViewRN} from 'react-native'
 import {FontAwesome5} from "@expo/vector-icons";
 import Colors from "../constants/Colors";
 import Title from "../components/BookItem/Title";
@@ -12,13 +13,15 @@ import BadgeThemed from "../components/BadgeThemed";
 import {observer} from "mobx-react";
 import {bookDetailsStore} from "../store/bookDetails.store";
 import {convertDateToDashedDate, convertSecondsToDate} from "../utils/date";
-import React, {useEffect, useState} from "react";
+import React, {createRef, useEffect, useState} from "react";
 import {Book} from "../models/Book.model";
 import {addComment} from "../firebase/bookList.firebase";
 import {getAverageScore} from "../utils/score";
 import {BookStatus} from "../models/BookShelf.model";
 import Dropdown from "../components/Dropdown";
-import {changeBookScore, changeBookStatus} from '../firebase/bookShelf.firebase'
+import {changeBookPagesRead, changeBookScore, changeBookStatus} from '../firebase/bookShelf.firebase'
+import create = StyleSheet.create;
+import {useToast} from "react-native-toast-notifications";
 
 const statusOptions = [
     {
@@ -87,12 +90,17 @@ export default function BookDetails() {
     const textarea = React.createRef();
     const [myScore, setMyScore] = useState(null)
     const [bookStatus, setBookStatus] = useState(null)
+    const [pagesRead, setPagesRead] = useState('0')
+    const textInput = createRef()
+    const toast = useToast();
+
     useEffect(() => {
         setBookDetails(bookDetailsStore.bookDetails)
         setIsInBookshelfView(bookDetailsStore.isInBookshelfView)
         if (bookDetailsStore.isInBookshelfView) {
             setInitialBookStatus()
             setInitialScore()
+            setInitialPagesRead()
         }
     }, [])
 
@@ -114,6 +122,11 @@ export default function BookDetails() {
         setMyScore(myScore)
     }
 
+    const setInitialPagesRead = () => {
+        const value = bookDetailsStore.bookDetails?.pagesRead
+        setPagesRead(String(value) ?? '0')
+    }
+
     const handleAddComment = async () => {
         const commentMessage = textarea.current.value
         if (!commentMessage.trim()) {
@@ -131,15 +144,30 @@ export default function BookDetails() {
         }
     }
 
+    const handleOnPagesReadInputBlur = async () => {
+        const pagesRead = parseInt(textInput.current.value)
+        console.log(pagesRead)
+        if(pagesRead >=0 && pagesRead <= bookDetails.pages){
+            const response = await changeBookPagesRead( bookDetails?.id, pagesRead)
+            if(response){
+                toast.show('Zmieniono', {type:'success'})
+            } else {
+                textInput.current.value = bookDetails?.pagesRead
+                toast.show('Wystąpił nieoczekiwany błąd', {type:'danger'})
+            }
+        } else {
+            textInput.current.value = bookDetails?.pagesRead
+            toast.show('Błędne wartości', {type:'danger'})
+        }
+    }
+
 
     const handleChangeBookStatus = async (option) => {
-        const bookId = bookDetails?.id
-        changeBookStatus(bookId, option.value)
+        changeBookStatus(bookDetails?.id, option.value)
     }
 
     const handleChangeBookScore = (option) => {
-        const bookId = bookDetails?.id
-        changeBookScore(bookId, option.value)
+        changeBookScore(bookDetails?.id, option.value)
     }
 
     const MainInfoButtons = ({isInBookshelfView}: any) => {
@@ -160,9 +188,22 @@ export default function BookDetails() {
                 onSelect={v => handleChangeBookScore(v)}
             />
 
-            <Button title={'PAGES READ: ' + bookDetailsStore.bookDetails?.pagesRead}
-                    onPress={() => {
-                    }}/>
+            <View style={[s.pagesReadView, {backgroundColor: Colors[colorScheme].tint}]}>
+                <ViewRN style={{flexDirection: "row"}}>
+
+                    <Text>Strony</Text>
+                    <ViewRN style={{justifyContent: 'flex-start', flexDirection: "row", marginLeft: Spacing.xs}}>
+                        <TextInput
+                            ref={textInput}
+                            style={{width: 30, color: Colors[colorScheme].text, borderWidth: 0}}
+                            defaultValue={pagesRead}
+                            onBlur={()=>handleOnPagesReadInputBlur()}
+                        />
+                        <Text> / {bookDetails?.pages}</Text>
+                    </ViewRN>
+                </ViewRN>
+
+            </View>
         </>)
     }
 
@@ -372,5 +413,14 @@ const s = StyleSheet.create({
     option: {
         width: '100%',
         paddingVertical: Spacing.sm
+    },
+    pagesReadView: {
+        width: '100%',
+        fontWeight: '500',
+        textTransform: 'uppercase',
+        height: 35,
+        flexDirection:'row',
+        alignItems:"center",
+        justifyContent: "center"
     }
 });

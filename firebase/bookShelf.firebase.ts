@@ -9,6 +9,7 @@ import {bookShelfStore} from "../store/bookShelf.store";
 import {BookStatus} from "../models/BookShelf.model";
 import {userStore} from "../store/user.store";
 import {firebaseConfig} from "./firebaseConfig";
+import {updateBookScore} from "./bookList.firebase";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -40,16 +41,27 @@ const loadBooksInMyBookshelf = async () => {
 
 const changeBookStatus = async (bookId: string, status: BookStatus) => {
     const userId = userStore.user.uid
+    let {usersFinished} = bookDetailsStore.bookDetails
+    let changeUserFinished = false
     const newBookshelf = [...bookShelfStore.bookShelf].map(book => {
         if (book.id === bookId) {
+            if(getIsComplationStatusChanged(book.status, status)){
+                usersFinished = getNewUsersFinishedNumber(status, usersFinished)
+                changeUserFinished = true
+            }
             book.status = status
         }
         return book
     })
-    const docRef = doc(db, `profile/${userId}`);
+    const profileDocRef = doc(db, `profile/${userId}`);
+    const bookDocRef = doc(db, `book/${bookId}`)
     try {
-        await updateDoc(docRef, {bookShelf: newBookshelf})
+        await updateDoc(profileDocRef, {bookShelf: newBookshelf})
+        if(changeUserFinished){
+            await updateDoc(bookDocRef, {usersFinished})
+        }
         bookDetailsStore.updateStatus(status)
+        bookDetailsStore.updateUsersFinished(usersFinished)
         profileStore.updateProfileBookshelf(newBookshelf)
         return true;
     } catch (e) {
@@ -68,6 +80,7 @@ const changeBookScore = async (bookId: string, score: Score) => {
     const docRef = doc(db, `profile/${userId}`);
     try {
         await updateDoc(docRef, {bookShelf: newBookshelf})
+        await updateBookScore(bookId, score)
         bookDetailsStore.updateMyScore(score)
         profileStore.updateProfileBookshelf(newBookshelf)
         return true;
@@ -93,6 +106,14 @@ const changeBookPagesRead = async (bookId:string, pagesRead:number) =>{
     } catch (e) {
         return false
     }
+}
+
+const getIsComplationStatusChanged = (oldStatus:BookStatus, newStatus: BookStatus) => {
+    return oldStatus === BookStatus.Completed ? (newStatus !== oldStatus) : (newStatus === BookStatus.Completed)
+}
+
+const getNewUsersFinishedNumber = (status:BookStatus, usersFinished:number):number => {
+    return status===BookStatus.Completed ? usersFinished+1 : usersFinished-1
 }
 
 export {

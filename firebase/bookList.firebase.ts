@@ -1,26 +1,26 @@
 import {initializeApp} from "firebase/app";
 import {
-    getFirestore,
     collection,
-    query,
-    orderBy,
-    limit,
-    getDocs,
-    startAfter,
     doc,
+    getDoc,
+    getDocs,
+    getFirestore,
+    limit,
+    orderBy,
+    query,
+    startAfter,
     updateDoc,
     where,
 } from 'firebase/firestore/lite';
 // @ts-ignore
 import {FIREBASE_API_KEY, FIREBASE_APP_ID, FIREBASE_MESSAAGING_SENDER_ID} from 'react-native-dotenv';
-import {Book} from "../models/Book.model";
+import {Book, Comment, Score} from "../models/Book.model";
 import {bookListStore} from '../store/bookList.store'
 import {getBookListCount} from './quantities.firebase'
-import {toJS} from "mobx";
 import {bookDetailsStore} from "../store/bookDetails.store";
 import {profileStore} from "../store/profile.store";
-import {Comment} from '../models/Book.model'
 import {firebaseConfig} from "./firebaseConfig";
+import {userStore} from "../store/user.store";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -95,8 +95,8 @@ const loadFirst50SearchResults = async (queryText: string) => {
     })
     bookListStore.setLastVisibleDoc(snapshot.docs[snapshot.docs.length - 1])
     bookListStore.setBookList(bookList)
-    console.log(bookListStore.bookListLength<=50)
-    bookListStore.setLoadMoreBooks(!(bookListStore.bookListLength<=50))
+    console.log(bookListStore.bookListLength <= 50)
+    bookListStore.setLoadMoreBooks(!(bookListStore.bookListLength <= 50))
 }
 
 const loadAdditional50SearchResults = async (queryText: string) => {
@@ -112,7 +112,7 @@ const loadAdditional50SearchResults = async (queryText: string) => {
 
     const snapshot = await getDocs(q)
 
-    if(snapshot.docs.length <1){
+    if (snapshot.docs.length < 1) {
         bookListStore.setLoadMoreBooks(false)
         return
     }
@@ -125,11 +125,52 @@ const loadAdditional50SearchResults = async (queryText: string) => {
     bookListStore.addToBookList(bookList)
 }
 
+const updateBookScore = async (bookId: string, score: Score) => {
+    const userId = userStore.user.uid
+    const docRef = doc(db, `book/${bookId}`);
+    try {
+
+        const result = await getDoc(docRef)
+        const userRate = [...result.data().userRate]
+        let { scoreAmount } = result.data()
+        let { totalScore } = result.data()
+        const isScoreFromCurrentUser = userRate.find(item => item.userId === userId)
+        let newUserRate = userRate
+        if (!isScoreFromCurrentUser) {
+            newUserRate.push({
+                userId: userId,
+                userScore: score
+            })
+            totalScore = scoreAmount+score
+            scoreAmount++
+        } else {
+            newUserRate = userRate.map(item => {
+                if (item.userId === userId) {
+                    const diff = score - item.userScore
+                    totalScore = totalScore + diff
+                    console.log(totalScore)
+                    item = {
+                        userId: userId,
+                        userScore: score
+                    }
+                }
+                return item
+            })
+        }
+        await updateDoc(docRef, {userRate: newUserRate, scoreAmount, totalScore})
+        bookDetailsStore.updateTotalScore(totalScore)
+        bookDetailsStore.updateScoreAmount(scoreAmount)
+    } catch (e) {
+        return false
+    }
+}
+
 
 export {
     loadFirst10Books,
     loadAdditional10Books,
     addComment,
     loadFirst50SearchResults,
-    loadAdditional50SearchResults
+    loadAdditional50SearchResults,
+    updateBookScore
 }

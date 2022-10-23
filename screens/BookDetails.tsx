@@ -20,7 +20,6 @@ import {getAverageScore} from "../utils/score";
 import {BookStatus} from "../models/BookShelf.model";
 import Dropdown from "../components/Dropdown";
 import {changeBookPagesRead, changeBookScore, changeBookStatus} from '../firebase/bookShelf.firebase'
-import create = StyleSheet.create;
 import {useToast} from "react-native-toast-notifications";
 
 const statusOptions = [
@@ -146,7 +145,6 @@ export default function BookDetails() {
 
     const handleOnPagesReadInputBlur = async () => {
         const pagesRead = parseInt(textInput.current.value)
-        console.log(pagesRead)
         if(pagesRead >=0 && pagesRead <= bookDetails.pages){
             const response = await changeBookPagesRead( bookDetails?.id, pagesRead)
             if(response){
@@ -207,6 +205,39 @@ export default function BookDetails() {
         </>)
     }
 
+    const BookScoreAndPagesView = observer(()=>{
+        return(
+            <View style={s.scoreContainer}>
+
+                <View>
+                    <View style={s.numericInfo}>
+                        <View style={s.bookIcon}>
+                            <FontAwesome5 size={FontSize.h4} name="star" color={Colors[colorScheme].text}/>
+                        </View>
+                        <Title>{getAverageScore(bookDetailsStore.totalScore, bookDetailsStore.scoreAmount)}</Title>
+                    </View>
+                    <View style={s.numericInfo}>
+                        <View style={s.bookIcon}>
+                            <FontAwesome5 size={FontSize.h4} name={'users'}
+                                          color={Colors[colorScheme].text}/>
+                        </View>
+                        <Title>{bookDetailsStore.totalScore}</Title>
+                    </View>
+
+                    <View style={s.spacer}/>
+
+                    <View style={s.numericInfo}>
+                        <View style={s.bookIcon}>
+                            <FontAwesome5 size={FontSize.h4} name={'book-reader'}
+                                          color={Colors[colorScheme].text}/>
+                        </View>
+                        <Title>{bookDetailsStore.bookDetails.usersFinished}</Title>
+                    </View>
+                </View>
+            </View>
+        )
+    })
+
 
     const BookDetailsView = () => {
         return (bookDetails &&
@@ -223,38 +254,11 @@ export default function BookDetails() {
                             <Image style={s.mainInfoImage} source={require('../assets/images/book-img-1.jpg')}/>
                         </View>
                         <View style={s.mainInfoContent}>
-                            {MainInfoButtons({isInBookshelfView})}
+                            <MainInfoButtons isInBookshelfView={isInBookshelfView} />
                         </View>
                     </View>
 
-                    <View style={s.scoreContainer}>
-
-                        <View>
-                            <View style={s.numericInfo}>
-                                <View style={s.bookIcon}>
-                                    <FontAwesome5 size={FontSize.h4} name="star" color={Colors[colorScheme].text}/>
-                                </View>
-                                <Title>{getAverageScore(bookDetails.totalScore, bookDetails.scoreAmount)}</Title>
-                            </View>
-                            <View style={s.numericInfo}>
-                                <View style={s.bookIcon}>
-                                    <FontAwesome5 size={FontSize.h4} name={'users'}
-                                                  color={Colors[colorScheme].text}/>
-                                </View>
-                                <Title>{bookDetails.scoreAmount}</Title>
-                            </View>
-
-                            <View style={s.spacer}/>
-
-                            <View style={s.numericInfo}>
-                                <View style={s.bookIcon}>
-                                    <FontAwesome5 size={FontSize.h4} name={'book-reader'}
-                                                  color={Colors[colorScheme].text}/>
-                                </View>
-                                <Title>{bookDetails.usersFinished}</Title>
-                            </View>
-                        </View>
-                    </View>
+                    <BookScoreAndPagesView/>
 
                     <View style={s.releasedDateContainer}>
 

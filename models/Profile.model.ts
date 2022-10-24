@@ -2,6 +2,7 @@ export interface Profile {
     achievements: Achievements,
     bookShelf: Book[]
     dailyReadPages: DailyReadPages[]
+    friends: Friend[]
     dayStreak: number
     level: number
     avatar: string | null,
@@ -44,9 +45,20 @@ export interface DateGT {
     seconds: number
 }
 
+export interface Friend {
+    id:string,
+    username: string,
+    avatar:string | null,
+}
+
 export enum BookStatus {
     PlanToRead = 0,
     Reading,
     Completed,
 }
 
+export interface ProfileListItem {
+    username:string,
+    id: string,
+    avatar: string | null
+}

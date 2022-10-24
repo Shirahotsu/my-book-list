@@ -27,6 +27,7 @@ import {observer} from "mobx-react";
 import {useState} from "react";
 import {userStore} from "../store/user.store";
 import {Button} from "../components/Themed";
+import FriendScreen from "../screens/Friends.screen";
 
 const isLoggedIn = false
 
@@ -109,6 +110,17 @@ function MyBookshelfStackScreen({navigation}:any) {
     );
 }
 
+const ProfileStack = createNativeStackNavigator();
+
+function ProfileStackScreen({navigation}:any) {
+    return (
+        <ProfileStack.Navigator initialRouteName="Profile">
+            <ProfileStack.Screen name="Profile" component={Profile} />
+            <ProfileStack.Screen  name="Friends" component={FriendScreen} />
+        </ProfileStack.Navigator>
+    );
+}
+
 const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
 function BottomTabNavigator() {
@@ -153,10 +165,12 @@ function BottomTabNavigator() {
             />
             <BottomTab.Screen
                 name="Profile"
-                component={Profile}
+                component={ProfileStackScreen}
                 options={{
+                    unmountOnBlur:true,
                     tabBarIcon: ({color}) => <TabBarIcon name="user" color={color}/>,
-                    tabBarShowLabel: false
+                    tabBarShowLabel: false,
+                    headerShown: false,
                 }}
             />
             <BottomTab.Screen

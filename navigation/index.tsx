@@ -28,6 +28,7 @@ import {useState} from "react";
 import {userStore} from "../store/user.store";
 import {Button} from "../components/Themed";
 import FriendScreen from "../screens/Friends.screen";
+import FriendProfileScreen from "../screens/FriendProfile.screen";
 
 const isLoggedIn = false
 
@@ -117,6 +118,7 @@ function ProfileStackScreen({navigation}:any) {
         <ProfileStack.Navigator initialRouteName="Profile">
             <ProfileStack.Screen name="Profile" component={Profile} />
             <ProfileStack.Screen  name="Friends" component={FriendScreen} />
+            <ProfileStack.Screen name={"FriendProfile"} component={FriendProfileScreen}/>
         </ProfileStack.Navigator>
     );
 }

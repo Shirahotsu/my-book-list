@@ -1,3 +1,5 @@
+import {BookStatus} from "./BookShelf.model";
+
 export default interface BookItemProps {
     title: string
     bookCover?: string
@@ -7,4 +9,5 @@ export default interface BookItemProps {
     pagesRead?: number
     maxPages?: number
     booksRead?: number
+    status?:BookStatus | null
 }

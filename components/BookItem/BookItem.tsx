@@ -8,6 +8,7 @@ import {FontAwesome5} from "@expo/vector-icons";
 import useColorScheme from "../../hooks/useColorScheme";
 import FontSize from "../../constants/FontSize";
 import BookItemProps from '../../models/BookItemProps.model'
+import {BookStatus} from "../../models/BookShelf.model";
 
 
 export default function BookItem(props: BookItemProps) {
@@ -18,6 +19,19 @@ export default function BookItem(props: BookItemProps) {
     const pagesRead: number | string = props.pagesRead ?? '0'
     const maxPages: number | string = props.maxPages ?? '0'
 
+    const getStatusTextFormEnum = (status: BookStatus | undefined | null) => {
+        switch (status){
+            case BookStatus.Completed:
+                return 'PRZECZYTANO'
+            case BookStatus.PlanToRead:
+                return 'DO PRZECZYTANIA'
+            case BookStatus.Reading:
+                return 'W TRAKCIE'
+            default:
+                return ''
+        }
+    }
+
     return (
         <View style={s.bookItemContainer}>
             <View style={s.bookImageContainer}>
@@ -27,6 +41,7 @@ export default function BookItem(props: BookItemProps) {
                 <View>
                     {!isFromMyBookList && <Text style={s.bookNr}>#{props.number}</Text>}
                     <Title numberOfLines={1}>{props.title}</Title>
+                    <Text numberOfLines={1} style={{fontSize:FontSize.small, opacity:0.8}}>{getStatusTextFormEnum(props.status)}</Text>
                 </View>
                 <View>
                     <View style={s.bookNumberInfo}>

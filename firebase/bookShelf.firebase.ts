@@ -11,6 +11,7 @@ import {userStore} from "../store/user.store";
 import {firebaseConfig} from "./firebaseConfig";
 import {updateBookScore} from "./bookList.firebase";
 import {loadProfileDetails} from "./profile.firebase";
+import {toJS} from "mobx";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);

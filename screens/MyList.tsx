@@ -48,7 +48,7 @@ export default function MyList({navigation}: RootTabScreenProps<'MyList'>) {
                     <View key={i} style={s.item}>
                         <TouchableHighlight onPress={() => handleOnBookItemClick(book)}>
                         <BookItem isFromMyBookList={true} title={book.title} pagesRead={book.pagesRead} maxPages={book.pages}
-                                  score={book.myScore}/>
+                                  score={book.myScore} status={book.status}/>
                         </TouchableHighlight>
                     </View>
                 )}

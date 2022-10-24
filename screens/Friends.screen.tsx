@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {observer} from "mobx-react";
-import {Image, Pressable, StyleSheet} from "react-native";
+import {Image, Pressable, StyleSheet, TouchableOpacity} from "react-native";
 import {FontAwesome5} from "@expo/vector-icons";
 import {Button, ScrollView, Text, TextInput, View} from "../components/Themed";
 import {profileStore} from "../store/profile.store";
@@ -10,9 +10,11 @@ import {addUserToFriends, loadProfileList, removeUserFromFriends} from "../fireb
 import Colors from "../constants/Colors";
 import {Friend} from "../models/Profile.model";
 import {useToast} from "react-native-toast-notifications";
+import {loadFriendProfileDetails} from "../firebase/friendProfile.firebase";
+import {RootTabScreenProps} from "../types";
 
 
-const FriendScreen = () => {
+const FriendScreen = ({navigation}: RootTabScreenProps<'Profile'>) => {
     let timer
     const toast = useToast();
     const [isInAddingMode, setIsInAddingMode] = useState(false)
@@ -39,14 +41,30 @@ const FriendScreen = () => {
         }
     }
 
+    const handleOnUserTextPress = async (friend: Friend, mode: string) => {
+        if(mode==='add'){
+            return
+        }
+        const response = await loadFriendProfileDetails(friend.id)
+        if(response){
+            navigation.push('FriendProfile')
+        } else {
+            toast.show('Ups... coś poszło nie tak', {type: 'danger'})
+        }
+
+    }
+
     const Friend = ({friend, mode = 'view'}) => {
         return (
             <View style={s.friendView}>
                 <View style={s.avatarContainer}>
                     <Image style={s.avatarImage} source={require('../assets/images/avatar2.png')}/>
                 </View>
+
                 <View style={s.usernameView}>
-                    <Text style={{fontSize: FontSize.h4}}>{friend.username}</Text>
+                    <TouchableOpacity onPress={()=>handleOnUserTextPress(friend, mode)}>
+                        <Text style={{fontSize: FontSize.h4}}>{friend.username}</Text>
+                    </TouchableOpacity>
                 </View>
                 <Pressable onPress={() => handleOnIconClick(friend, mode)}>
                     <View style={s.removeFriendIconView}>

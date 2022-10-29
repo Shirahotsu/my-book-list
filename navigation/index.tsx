@@ -30,6 +30,7 @@ import {Button} from "../components/Themed";
 import FriendScreen from "../screens/Friends.screen";
 import FriendProfileScreen from "../screens/FriendProfile.screen";
 import ChartsScreen from "../screens/Charts.screen";
+import AchievementsScreen from "../screens/Achievements.screen";
 
 const isLoggedIn = false
 
@@ -121,6 +122,7 @@ function ProfileStackScreen({navigation}:any) {
             <ProfileStack.Screen  name="Friends" component={FriendScreen} />
             <ProfileStack.Screen name={"FriendProfile"} component={FriendProfileScreen}/>
             <ProfileStack.Screen name={"Charts"} component={ChartsScreen}/>
+            <ProfileStack.Screen name={"Achievements"} component={AchievementsScreen}/>
         </ProfileStack.Navigator>
     );
 }

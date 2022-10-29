@@ -24,9 +24,12 @@ export interface FriendsAchievement {
 }
 
 export interface BasicAchievement {
-    level: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10,
+    level: BasicAchievementLevel,
     value: number
 }
+
+export type BasicAchievementLevel = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
+
 
 export interface Book {
     id: string,

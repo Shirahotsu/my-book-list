@@ -1,10 +1,9 @@
-import {Pressable, StyleSheet, TouchableHighlight, TouchableOpacity, useColorScheme} from 'react-native';
+import {StyleSheet, TouchableOpacity, useColorScheme} from 'react-native';
 
-import {Button, Text, View, ScrollView} from '../components/Themed';
+import {Button, ScrollView, Text, View} from '../components/Themed';
 import BasicInfo from "../components/Profile/BasicInfo";
 import Spacing from "../constants/Spacing";
-import PagesRead from "../components/Profile/PagesRead";
-import {login, register, logOut} from '../firebase/main.firebase'
+import {logOut} from '../firebase/main.firebase'
 import {userStore} from "../store/user.store";
 import {useToast} from "react-native-toast-notifications";
 import {FontAwesome5} from "@expo/vector-icons";
@@ -55,7 +54,7 @@ export default function Profile({navigation}: RootTabScreenProps<'Profile'>) {
           <View style={s.horizontalBar}/>
           <LinkButton label={'Wykresy'} link={'Charts'}/>
           <View style={s.horizontalBar}/>
-          <LinkButton label={'Osiągnięcia'} link={'Friends'}/>
+          <LinkButton label={'Osiągnięcia'} link={'Achievements'}/>
         </View>
         <View style={s.logOutButton}>
           <Button title={'Wyloguj się'} onPress={() => handleOnLogOut()}/>

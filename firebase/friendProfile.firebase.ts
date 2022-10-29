@@ -6,6 +6,7 @@ import {firebaseConfig} from "./firebaseConfig";
 import {FriendProfileModel} from "../models/FriendProfile.model";
 import {friendProfileStore} from "../store/friendProfile.store";
 import {BookShelfItem} from "../models/BookShelf.model";
+import {achievementsStore} from "../store/achievements.store";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -68,6 +69,9 @@ const loadBooksInFriendsBookshelf = async () => {
         })
     })
     friendProfileStore.setBookshelf(bookshelf)
+}
+
+const loadFriendsAchievements = async () => {
 }
 
 export {

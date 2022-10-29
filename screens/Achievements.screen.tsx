@@ -5,6 +5,8 @@ import {Achievements} from "../models/Profile.model";
 import {getMaxValue} from "../utils/achievement.util";
 import {StyleSheet} from "react-native";
 import Spacing from "../constants/Spacing";
+import {Observer} from 'mobx-react'
+import {achievementsStore} from "../store/achievements.store";
 
 const mock: Achievements = {
     books: {
@@ -31,43 +33,47 @@ const mock: Achievements = {
 
 const AchievementsScreen = () => {
     return (
-        <View style={s.container}>
-            <AchievementItem
-                level={mock.books.level}
-                image={`books/books${mock.books.level}`}
-                title={'Książnik'}
-                description={'Przeczytaj daną ilość książek'}
-                currentValue={mock.books.value}
-                maxValue={getMaxValue('books', mock.books.level)}/>
-            <AchievementItem
-                level={mock.friends.level}
-                image={`friends/friends${mock.friends.level}`}
-                title={'Koleszka'}
-                description={'Dodaj nowych znajomych'}
-                currentValue={mock.friends.value}
-                maxValue={getMaxValue('friends', mock.friends.level)}/>
-            <AchievementItem
-                level={mock.pages.level}
-                image={`pages/pages${mock.pages.level}`}
-                title={'Stronny'}
-                description={'Przeczytaj daną ilość stron'}
-                currentValue={mock.pages.value}
-                maxValue={getMaxValue('pages', mock.pages.level)}/>
-            <AchievementItem
-                level={mock.score.level}
-                image={`score/score${mock.score.level}`}
-                title={'Krytyk'}
-                description={'Oceń książki'}
-                currentValue={mock.score.value}
-                maxValue={getMaxValue('score', mock.score.level)}/>
-            <AchievementItem
-                level={mock.streak.level}
-                image={`streak/streak${mock.streak.level}`}
-                title={'Silna wola'}
-                description={'Utrzymuj codzienną passę'}
-                currentValue={mock.streak.value}
-                maxValue={getMaxValue('streak', mock.streak.level)}/>
-        </View>
+        <Observer>
+            {() => (
+                <View style={s.container}>
+                    <AchievementItem
+                        level={achievementsStore.achievements.books.level}
+                        image={`books/books${achievementsStore.achievements.books.level}`}
+                        title={'Książnik'}
+                        description={'Przeczytaj daną ilość książek'}
+                        currentValue={achievementsStore.achievements.books.value}
+                        maxValue={getMaxValue('books', achievementsStore.achievements.books.level)}/>
+                    <AchievementItem
+                        level={achievementsStore.achievements.friends.level}
+                        image={`friends/friends${achievementsStore.achievements.friends.level}`}
+                        title={'Koleszka'}
+                        description={'Dodaj nowych znajomych'}
+                        currentValue={achievementsStore.achievements.friends.value}
+                        maxValue={getMaxValue('friends', achievementsStore.achievements.friends.level)}/>
+                    <AchievementItem
+                        level={achievementsStore.achievements.pages.level}
+                        image={`pages/pages${achievementsStore.achievements.pages.level}`}
+                        title={'Stronny'}
+                        description={'Przeczytaj daną ilość stron'}
+                        currentValue={achievementsStore.achievements.pages.value}
+                        maxValue={getMaxValue('pages', achievementsStore.achievements.pages.level)}/>
+                    <AchievementItem
+                        level={achievementsStore.achievements.score.level}
+                        image={`score/score${achievementsStore.achievements.score.level}`}
+                        title={'Krytyk'}
+                        description={'Oceń książki'}
+                        currentValue={achievementsStore.achievements.score.value}
+                        maxValue={getMaxValue('score', achievementsStore.achievements.score.level)}/>
+                    <AchievementItem
+                        level={achievementsStore.achievements.streak.level}
+                        image={`streak/streak${achievementsStore.achievements.streak.level}`}
+                        title={'Silna wola'}
+                        description={'Utrzymuj codzienną passę'}
+                        currentValue={achievementsStore.achievements.streak.value}
+                        maxValue={getMaxValue('streak', achievementsStore.achievements.streak.level)}/>
+                </View>
+            )}
+        </Observer>
     );
 };
 const s = StyleSheet.create({
@@ -75,7 +81,7 @@ const s = StyleSheet.create({
         height: '100%',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        paddingTop:Spacing.md,
+        paddingTop: Spacing.md,
     }
 })
 export default AchievementsScreen;

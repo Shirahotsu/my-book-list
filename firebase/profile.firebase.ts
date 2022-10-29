@@ -21,6 +21,7 @@ import {firebaseConfig} from "./firebaseConfig";
 import {toJS} from "mobx";
 import {bookListStore} from "../store/bookList.store";
 import {Book} from "../models/Book.model";
+import {achievementsStore} from "../store/achievements.store";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -78,6 +79,7 @@ const loadProfileDetails = async () => {
             friends: data.friends,
         }
         profileStore.setProfile(userProfile)
+        achievementsStore.setAchievements(userProfile.achievements)
         console.log(toJS(profileStore.profile.friends))
     }
 }

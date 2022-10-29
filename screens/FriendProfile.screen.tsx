@@ -8,6 +8,8 @@ import {friendProfileStore} from "../store/friendProfile.store";
 import {observer, Observer} from "mobx-react";
 import {loadBooksInFriendsBookshelf} from "../firebase/friendProfile.firebase";
 import BookItem from "../components/BookItem/BookItem";
+import AchievementsScreen from "./Achievements.screen";
+import FriendsAchievements from "../components/Friend/FriendsAchievements";
 
 const FriendProfileScreen = () => {
     useEffect(() => {
@@ -56,7 +58,10 @@ const FriendProfileScreen = () => {
                         <View style={s.basicInfo}>
                             <BasicInfo/>
                         </View>
+                        <Text style={{fontSize:FontSize.h2, marginTop:Spacing.xl, marginBottom:Spacing.md}}>KSIĄŻKI:</Text>
                         <Bookshelf/>
+                        <Text style={{fontSize:FontSize.h2, marginTop:Spacing.xl}}>OSIĄGNIĘCIA:</Text>
+                        <FriendsAchievements/>
                     </View>
                 }
             </Observer>

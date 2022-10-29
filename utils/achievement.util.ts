@@ -1,6 +1,7 @@
 import {BasicAchievementLevel} from "../models/Profile.model";
+import {AchievementType} from "../models/Achievement.model";
 
-type AchievementType = 'books' | 'friends' | 'pages' | 'score' | 'streak'
+
 
 const achievementInfo = {
     books: {

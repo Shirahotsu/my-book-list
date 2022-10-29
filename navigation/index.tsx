@@ -29,6 +29,7 @@ import {userStore} from "../store/user.store";
 import {Button} from "../components/Themed";
 import FriendScreen from "../screens/Friends.screen";
 import FriendProfileScreen from "../screens/FriendProfile.screen";
+import ChartsScreen from "../screens/Charts.screen";
 
 const isLoggedIn = false
 
@@ -119,6 +120,7 @@ function ProfileStackScreen({navigation}:any) {
             <ProfileStack.Screen name="Profile" component={Profile} />
             <ProfileStack.Screen  name="Friends" component={FriendScreen} />
             <ProfileStack.Screen name={"FriendProfile"} component={FriendProfileScreen}/>
+            <ProfileStack.Screen name={"Charts"} component={ChartsScreen}/>
         </ProfileStack.Navigator>
     );
 }
@@ -175,14 +177,14 @@ function BottomTabNavigator() {
                     headerShown: false,
                 }}
             />
-            <BottomTab.Screen
-                name="Settings"
-                component={Settings}
-                options={{
-                    tabBarIcon: ({color}) => <TabBarIcon name="cog" color={color}/>,
-                    tabBarShowLabel: false
-                }}
-            />
+            {/*<BottomTab.Screen*/}
+            {/*    name="Settings"*/}
+            {/*    component={Settings}*/}
+            {/*    options={{*/}
+            {/*        tabBarIcon: ({color}) => <TabBarIcon name="cog" color={color}/>,*/}
+            {/*        tabBarShowLabel: false*/}
+            {/*    }}*/}
+            {/*/>*/}
         </BottomTab.Navigator>
     );
 }

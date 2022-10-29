@@ -53,11 +53,10 @@ export default function Profile({navigation}: RootTabScreenProps<'Profile'>) {
         <View>
           <LinkButton label={'Przyjaciele'} link={'Friends'}/>
           <View style={s.horizontalBar}/>
-          <LinkButton label={'Wykresy'} link={'Friends'}/>
+          <LinkButton label={'Wykresy'} link={'Charts'}/>
           <View style={s.horizontalBar}/>
           <LinkButton label={'Osiągnięcia'} link={'Friends'}/>
         </View>
-        <PagesRead/>
         <View style={s.logOutButton}>
           <Button title={'Wyloguj się'} onPress={() => handleOnLogOut()}/>
         </View>

@@ -29,6 +29,7 @@ import {useToast} from "react-native-toast-notifications";
 import {profileStore} from "../store/profile.store";
 import {loadProfileDetails} from "../firebase/profile.firebase";
 import {RootTabScreenProps} from "../types";
+import {achievementsStore} from "../store/achievements.store";
 
 const statusOptions = [
     {
@@ -164,10 +165,12 @@ export default function BookDetails({navigation}: RootTabScreenProps<'MyBookShel
     }
 
     const handleOnPagesReadInputBlur = async () => {
-        const pagesRead = parseInt(textInput.current.value)
-        if (pagesRead >= 0 && pagesRead <= bookDetails.pages) {
-            const response = await changeBookPagesRead(bookDetails?.id, pagesRead)
+        const inputPagesRead = parseInt(textInput.current.value)
+        if (inputPagesRead >= 0 && inputPagesRead <= bookDetails.pages) {
+            const response = await changeBookPagesRead(bookDetails?.id, inputPagesRead)
             if (response) {
+                updatePagesReadAchievement(parseInt(pagesRead), inputPagesRead)
+                setPagesRead(String(inputPagesRead))
                 toast.show('Zmieniono', {type: 'success'})
             } else {
                 textInput.current.value = bookDetails?.pagesRead
@@ -179,12 +182,51 @@ export default function BookDetails({navigation}: RootTabScreenProps<'MyBookShel
         }
     }
 
+    const updatePagesReadAchievement = (currentPagesRead:number, newPagesRead: number) => {
+        const diff = newPagesRead - currentPagesRead
+        achievementsStore.updateAchievementValue(diff, 'pages')
+    }
+
+    const updateBooksReadAchievement = (newStatus: BookStatus) => {
+        if(getIsCompletionStatusChanged(newStatus)){
+            if(newStatus===BookStatus.Completed){
+                achievementsStore.updateAchievementValue(1, 'books')
+            } else{
+                if(!bookStatus){
+                    return
+                }
+                achievementsStore.updateAchievementValue(-1, 'books')
+            }
+        }
+    }
+
+    const getIsCompletionStatusChanged = (newStatus: BookStatus) => {
+        if(!bookStatus){
+            return true
+        }
+        const oldStatus = bookStatus.value
+        return oldStatus === BookStatus.Completed ? (newStatus !== oldStatus) : (newStatus === BookStatus.Completed)
+    }
+
 
     const handleChangeBookStatus = async (option) => {
+        updateBooksReadAchievement(option.value)
+        setNookNewStatus(option.value)
         changeBookStatus(bookDetails?.id, option.value)
     }
 
+    const setNookNewStatus = (value: BookStatus) => {
+        if (value === undefined) return
+        const label = statusOptions.find(v => v.value === value)?.label
+        if (!label) return;
+        const bookStatus = {label, value}
+        setBookStatus(bookStatus)
+    }
+
     const handleChangeBookScore = (option) => {
+        if(myScore===null){
+            achievementsStore.updateAchievementValue(1,'score')
+        }
         changeBookScore(bookDetails?.id, option.value)
     }
 
@@ -201,6 +243,9 @@ export default function BookDetails({navigation}: RootTabScreenProps<'MyBookShel
     const removeBookFromBookshelf = async () => {
         const result = await removeFromBookshelf(bookDetails.id)
         if (result){
+            const pagesReadInt = parseInt(pagesRead) || 0
+            const removeBook = !!(bookStatus && bookStatus.value===BookStatus.Completed)
+            await achievementsStore.updateAchievementOnBookRemove(!!myScore, removeBook, pagesReadInt)
             navigation.navigate('MyBookShelf')
         }  else {
             toast.show('Wystąpił nieoczekiwany błąd', {type: 'danger'})

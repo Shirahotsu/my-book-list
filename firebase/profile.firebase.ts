@@ -15,7 +15,7 @@ import {
 import {userStore} from "../store/user.store";
 // @ts-ignore
 import {FIREBASE_API_KEY, FIREBASE_APP_ID, FIREBASE_MESSAAGING_SENDER_ID} from 'react-native-dotenv';
-import {Friend, Profile, ProfileListItem} from "../models/Profile.model";
+import {Achievements, Friend, Profile, ProfileListItem} from "../models/Profile.model";
 import {profileStore} from "../store/profile.store";
 import {firebaseConfig} from "./firebaseConfig";
 import {toJS} from "mobx";
@@ -188,6 +188,17 @@ const removeUserFromFriends = async (friend:Friend)=>{
     }
 }
 
+const updateAchievements = async (achievements:Achievements) => {
+    const userId = userStore.user.uid
+    const docRef = doc(db, `profile/${userId}`)
+    try {
+        await updateDoc(docRef, {achievements: achievements})
+        return true;
+    } catch (e) {
+        return false
+    }
+}
+
 
 export {
     loadProfileDetails,
@@ -195,5 +206,6 @@ export {
     createProfileDetails,
     loadProfileList,
     addUserToFriends,
-    removeUserFromFriends
+    removeUserFromFriends,
+    updateAchievements
 }

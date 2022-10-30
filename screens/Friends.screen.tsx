@@ -12,6 +12,7 @@ import {Friend} from "../models/Profile.model";
 import {useToast} from "react-native-toast-notifications";
 import {loadFriendProfileDetails} from "../firebase/friendProfile.firebase";
 import {RootTabScreenProps} from "../types";
+import {achievementsStore} from "../store/achievements.store";
 
 
 const FriendScreen = ({navigation}: RootTabScreenProps<'Profile'>) => {
@@ -27,6 +28,7 @@ const FriendScreen = ({navigation}: RootTabScreenProps<'Profile'>) => {
         if (mode === 'add') {
             const result = await addUserToFriends(friend)
             if (result) {
+                achievementsStore.updateAchievementValue(1, 'friends')
                 toast.show('Dodano znajomego :)', {type: 'success'})
             } else {
                 toast.show('Ups... coś poszło nie tak', {type: 'danger'})
@@ -34,6 +36,7 @@ const FriendScreen = ({navigation}: RootTabScreenProps<'Profile'>) => {
         } else {
             const result = await removeUserFromFriends(friend)
             if (result) {
+                achievementsStore.updateAchievementValue(-1, 'friends')
                 toast.show('Usunięto znajomego :c', {type: 'success'})
             } else {
                 toast.show('Ups... coś poszło nie tak', {type: 'danger'})

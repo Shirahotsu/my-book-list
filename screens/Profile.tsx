@@ -11,6 +11,7 @@ import FontSize from "../constants/FontSize";
 import React from "react";
 import Colors from "../constants/Colors";
 import {RootTabScreenProps} from "../types";
+import {achievementsStore} from "../store/achievements.store";
 
 export default function Profile({navigation}: RootTabScreenProps<'Profile'>) {
 
@@ -29,6 +30,10 @@ export default function Profile({navigation}: RootTabScreenProps<'Profile'>) {
 
   const navigateTo = (link:string) => {
     navigation.push(link)
+  }
+
+  const showAchievementModal= () => {
+    achievementsStore.showAchievementModal('pages', 4)
   }
 
   const LinkButton = ({label, link}) => {
@@ -59,6 +64,11 @@ export default function Profile({navigation}: RootTabScreenProps<'Profile'>) {
         <View style={s.logOutButton}>
           <Button title={'Wyloguj się'} onPress={() => handleOnLogOut()}/>
         </View>
+
+        <View style={s.logOutButton}>
+          <Button title={'Show achievement'} onPress={() => showAchievementModal()}/>
+        </View>
+
       </View>
     </ScrollView>
   );

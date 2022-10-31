@@ -5,10 +5,10 @@
  */
 import {FontAwesome5} from '@expo/vector-icons';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {NavigationContainer, DefaultTheme, DarkTheme} from '@react-navigation/native';
+import {DarkTheme, DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import * as React from 'react';
-import {ColorSchemeName, Pressable, Text} from 'react-native';
+import {ColorSchemeName, Modal, StyleSheet} from 'react-native';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
@@ -18,19 +18,20 @@ import MyList from '../screens/MyList';
 import Top from '../screens/Top';
 import Search from '../screens/Search'
 import Profile from "../screens/Profile";
-import Settings from "../screens/Settings";
-import {RootStackParamList, RootTabParamList, RootTabScreenProps} from '../types';
+import {RootStackParamList, RootTabParamList} from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
 import LogIn from '../screens/LogIn'
 import SignIn from "../screens/SingIn";
-import {observer} from "mobx-react";
-import {useState} from "react";
+import {Observer, observer} from "mobx-react";
 import {userStore} from "../store/user.store";
-import {Button} from "../components/Themed";
+import {View} from "../components/Themed";
 import FriendScreen from "../screens/Friends.screen";
 import FriendProfileScreen from "../screens/FriendProfile.screen";
 import ChartsScreen from "../screens/Charts.screen";
 import AchievementsScreen from "../screens/Achievements.screen";
+import {achievementsStore} from "../store/achievements.store";
+import AchievementModal from "../components/AchievementModal";
+import Spacing from "../constants/Spacing";
 
 const isLoggedIn = false
 
@@ -56,18 +57,19 @@ const AuthStack = createNativeStackNavigator();
  */
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-const RootNavigator = observer(()=> {
+const RootNavigator = observer(() => {
 
     return (
         <Stack.Navigator>
-            <Stack.Screen name="Root" component={ userStore.isLogged ? BottomTabNavigator : AuthStackView} options={{headerShown: false}}/>
+            <Stack.Screen name="Root" component={userStore.isLogged ? BottomTabNavigator : AuthStackView}
+                          options={{headerShown: false}}/>
             <Stack.Screen name="NotFound" component={NotFoundScreen} options={{title: 'Oops!'}}/>
         </Stack.Navigator>
     );
 })
 
-function AuthStackView({navigation}:any){
-    return(
+function AuthStackView({navigation}: any) {
+    return (
         <AuthStack.Navigator>
             <Stack.Screen name="Login" component={LogIn} options={{headerShown: false}}/>
             <Stack.Screen name="SignIn" component={SignIn} options={{headerShown: false}}/>
@@ -83,43 +85,44 @@ function AuthStackView({navigation}:any){
 const TopStack = createNativeStackNavigator();
 
 
-function TopStackScreen({navigation}:any) {
+function TopStackScreen({navigation}: any) {
     return (
         <TopStack.Navigator initialRouteName="Top">
-            <TopStack.Screen name="Top" component={Top} />
-            <TopStack.Screen  name="Details" component={BookDetails} />
+            <TopStack.Screen name="Top" component={Top}/>
+            <TopStack.Screen name="Details" component={BookDetails}/>
         </TopStack.Navigator>
     );
 }
 
 const SearchStack = createNativeStackNavigator();
 
-function SearchStackScreen({navigation}:any) {
+function SearchStackScreen({navigation}: any) {
     return (
         <SearchStack.Navigator initialRouteName="Search">
-            <SearchStack.Screen name="Search" component={Search} />
-            <SearchStack.Screen  name="Details" component={BookDetails} />
+            <SearchStack.Screen name="Search" component={Search}/>
+            <SearchStack.Screen name="Details" component={BookDetails}/>
         </SearchStack.Navigator>
     );
 }
+
 const MyBookshelfStack = createNativeStackNavigator();
 
-function MyBookshelfStackScreen({navigation}:any) {
+function MyBookshelfStackScreen({navigation}: any) {
     return (
         <MyBookshelfStack.Navigator initialRouteName="MyBookShelf">
-            <MyBookshelfStack.Screen name="MyBookShelf" component={MyList} />
-            <MyBookshelfStack.Screen  name="Details" component={BookDetails} />
+            <MyBookshelfStack.Screen name="MyBookShelf" component={MyList}/>
+            <MyBookshelfStack.Screen name="Details" component={BookDetails}/>
         </MyBookshelfStack.Navigator>
     );
 }
 
 const ProfileStack = createNativeStackNavigator();
 
-function ProfileStackScreen({navigation}:any) {
+function ProfileStackScreen({navigation}: any) {
     return (
         <ProfileStack.Navigator initialRouteName="Profile">
-            <ProfileStack.Screen name="Profile" component={Profile} />
-            <ProfileStack.Screen  name="Friends" component={FriendScreen} />
+            <ProfileStack.Screen name="Profile" component={Profile}/>
+            <ProfileStack.Screen name="Friends" component={FriendScreen}/>
             <ProfileStack.Screen name={"FriendProfile"} component={FriendProfileScreen}/>
             <ProfileStack.Screen name={"Charts"} component={ChartsScreen}/>
             <ProfileStack.Screen name={"Achievements"} component={AchievementsScreen}/>
@@ -133,63 +136,104 @@ function BottomTabNavigator() {
     const colorScheme = useColorScheme();
 
     return (
-        <BottomTab.Navigator
-            backBehavior='history'
-            initialRouteName="Profile"
-            screenOptions={{
-                tabBarActiveTintColor: Colors[colorScheme].tint,
-            }}>
-            <BottomTab.Screen
-                name="MyList"
-                component={MyBookshelfStackScreen}
-                options={{
-                    unmountOnBlur:true,
-                    tabBarIcon: ({color}) => <TabBarIcon name="book-open" color={color}/>,
-                    tabBarShowLabel: false,
-                    headerShown: false,
-                }}
-            />
-            <BottomTab.Screen
-                name="TopStack"
-                component={TopStackScreen}
-                options={{
-                    unmountOnBlur:true,
-                    tabBarIcon: ({color}) => <TabBarIcon name="hotjar" color={color}/>,
-                    tabBarShowLabel: false,
-                    headerShown: false,
-                }}
-            />
-            <BottomTab.Screen
-                name="SearchStack"
-                component={SearchStackScreen}
-                options={{
-                    unmountOnBlur:true,
-                    tabBarIcon: ({color}) => <TabBarIcon name="search" color={color}/>,
-                    tabBarShowLabel: false,
-                    headerShown: false,
-                }}
-            />
-            <BottomTab.Screen
-                name="Profile"
-                component={ProfileStackScreen}
-                options={{
-                    unmountOnBlur:true,
-                    tabBarIcon: ({color}) => <TabBarIcon name="user" color={color}/>,
-                    tabBarShowLabel: false,
-                    headerShown: false,
-                }}
-            />
-            {/*<BottomTab.Screen*/}
-            {/*    name="Settings"*/}
-            {/*    component={Settings}*/}
-            {/*    options={{*/}
-            {/*        tabBarIcon: ({color}) => <TabBarIcon name="cog" color={color}/>,*/}
-            {/*        tabBarShowLabel: false*/}
-            {/*    }}*/}
-            {/*/>*/}
-        </BottomTab.Navigator>
+        <>
+            <BottomTab.Navigator
+                backBehavior='history'
+                initialRouteName="Profile"
+                screenOptions={{
+                    tabBarActiveTintColor: Colors[colorScheme].tint,
+                }}>
+                <BottomTab.Screen
+                    name="MyList"
+                    component={MyBookshelfStackScreen}
+                    options={{
+                        unmountOnBlur: true,
+                        tabBarIcon: ({color}) => <TabBarIcon name="book-open" color={color}/>,
+                        tabBarShowLabel: false,
+                        headerShown: false,
+                    }}
+                />
+                <BottomTab.Screen
+                    name="TopStack"
+                    component={TopStackScreen}
+                    options={{
+                        unmountOnBlur: true,
+                        tabBarIcon: ({color}) => <TabBarIcon name="hotjar" color={color}/>,
+                        tabBarShowLabel: false,
+                        headerShown: false,
+                    }}
+                />
+                <BottomTab.Screen
+                    name="SearchStack"
+                    component={SearchStackScreen}
+                    options={{
+                        unmountOnBlur: true,
+                        tabBarIcon: ({color}) => <TabBarIcon name="search" color={color}/>,
+                        tabBarShowLabel: false,
+                        headerShown: false,
+                    }}
+                />
+                <BottomTab.Screen
+                    name="Profile"
+                    component={ProfileStackScreen}
+                    options={{
+                        unmountOnBlur: true,
+                        tabBarIcon: ({color}) => <TabBarIcon name="user" color={color}/>,
+                        tabBarShowLabel: false,
+                        headerShown: false,
+                    }}
+                />
+                {/*<BottomTab.Screen*/}
+                {/*    name="Settings"*/}
+                {/*    component={Settings}*/}
+                {/*    options={{*/}
+                {/*        tabBarIcon: ({color}) => <TabBarIcon name="cog" color={color}/>,*/}
+                {/*        tabBarShowLabel: false*/}
+                {/*    }}*/}
+                {/*/>*/}
+            </BottomTab.Navigator>
+            <Observer>
+                {() =>
+                    <View style={s.modalWrapper}>
+                        <Modal transparent={true} animationType="slide"
+                               visible={achievementsStore.newAchievementDialog.isVisible}>
+                            <View style={s.modalView}>
+                                <AchievementModal/>
+                            </View>
+                        </Modal>
+                    </View>
+                }
+            </Observer>
+        </>
     );
 }
+
+const s = StyleSheet.create({
+    modalWrapper: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        bottom: 300,
+        position: "absolute"
+    },
+    modalView: {
+        margin: 20,
+        marginTop: 100,
+        backgroundColor: Colors.dark.background,
+        borderRadius: 20,
+        padding: Spacing.md,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
+    },
+})
+
 
 /**
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/

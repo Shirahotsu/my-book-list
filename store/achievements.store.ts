@@ -1,13 +1,14 @@
-import {Achievements, BasicAchievement, FriendsAchievement} from "../models/Profile.model";
-import {action, makeObservable, observable, toJS} from "mobx";
+import {Achievements, BasicAchievement, BasicAchievementLevel, FriendsAchievement} from "../models/Profile.model";
+import {action, makeObservable, observable} from "mobx";
 import {AchievementType, NewAchievementDialog} from "../models/Achievement.model";
 import {getLevelByValue} from "../utils/achievement.util";
 import {updateAchievements} from "../firebase/profile.firebase";
 
 const INITIAL_NEW_ACHIEVEMENT: NewAchievementDialog = {
     message: '',
-    type: undefined,
-    level: 0
+    type: 'books',
+    level: 1,
+    isVisible: false
 }
 
 class AchievementsStore {
@@ -44,6 +45,8 @@ class AchievementsStore {
             updateAchievement: action,
             setNewAchievementDialog: action,
             clearNewAchievementDialog: action,
+            showAchievementModal: action,
+            hideAchievementModal: action,
         })
     }
 
@@ -78,20 +81,36 @@ class AchievementsStore {
             value: newValue < 0 ? 0 : newValue,
             level: newLevel
         }
+        if(levelFromValue > currentLevel){
+            this.showAchievementModal(type, levelFromValue)
+        }
         await this.updateAchievement(type, achievement)
     }
 
-    async updateAchievementOnBookRemove(removeScore:boolean, removeBook:boolean, removePages:number) {
-        if(removeScore){
+    async updateAchievementOnBookRemove(removeScore: boolean, removeBook: boolean, removePages: number) {
+        if (removeScore) {
             this.achievements.score.value--
         }
-        if(removeBook){
+        if (removeBook) {
             this.achievements.books.value--
         }
-        if(removePages>0){
-            this.achievements.pages.value = this.achievements.pages.value-removePages
+        if (removePages > 0) {
+            this.achievements.pages.value = this.achievements.pages.value - removePages
         }
         await updateAchievements(this.achievements)
+    }
+
+    showAchievementModal(type:AchievementType, level:BasicAchievementLevel) {
+        this.newAchievementDialog.type = type
+        this.newAchievementDialog.level = level
+        this.newAchievementDialog.isVisible = true
+    }
+
+    hideAchievementModal() {
+        this.newAchievementDialog.isVisible = false
+        setTimeout(()=>{
+            this.newAchievementDialog = INITIAL_NEW_ACHIEVEMENT
+        }, 4000)
     }
 
 }

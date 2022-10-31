@@ -41,6 +41,7 @@ export class ProfileStore {
     searchText: string = ''
     loadMoreProfiles: boolean = true
     lastVisibleDoc: any = null
+    userLevel: number = 0
 
     constructor() {
         makeObservable(this, {
@@ -49,6 +50,7 @@ export class ProfileStore {
             profileList: observable,
             loadMoreProfiles: observable,
             lastVisibleDoc: observable,
+            userLevel: observable,
             setProfile: action,
             changeUserName: action,
             updateProfileBookshelf: action,
@@ -74,6 +76,18 @@ export class ProfileStore {
     setProfile(newProfile: ProfileInterface) {
         this.profile = newProfile
         this.setInitialFilterableFriends()
+        this.setUserLevel()
+    }
+
+    setUserLevel(){
+        let level = 0
+        Object.values(this.profile.achievements).forEach(value => {
+            const lvl = parseInt(value.level)
+            if(lvl){
+                level = level+lvl
+            }
+        })
+        this.userLevel = level
     }
 
     setInitialFilterableFriends() {

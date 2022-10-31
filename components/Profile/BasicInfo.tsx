@@ -16,7 +16,6 @@ export default function BasicInfo() {
     const modalRef = React.createRef();
 
     useEffect( async () => {
-        console.log('%c USE EFFECT', 'color:fuchsia')
         await loadProfileDetails()
         if(profileStore.profile.userName !== userName.value){
             setUserName({value:profileStore.profile.userName})
@@ -54,8 +53,8 @@ export default function BasicInfo() {
                     </View>
                     <View style={s.infoContainer}>
                         <Text onPress={()=>handleOnEditPress()} style={s.infoText}>{profileStore.profile.userName}</Text>
-                        <Text style={s.infoText}>Level: {profileStore.profile.level}</Text>
-                        <Text style={s.infoText}>Dni pod rząd: {profileStore.profile.dayStreak}</Text>
+                        <Text style={s.infoText}>Poziom: {profileStore.userLevel}</Text>
+                        <Text style={s.infoText}>Dni pod rząd: {profileStore.profile.achievements.streak.value}</Text>
                     </View>
                     <Modal ref={modalRef}>
                         <View>

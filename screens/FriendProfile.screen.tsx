@@ -25,7 +25,8 @@ const FriendProfileScreen = () => {
             <View style={s.infoContainer}>
                 <Text style={s.infoText}>{friendProfileStore.profile.userName}</Text>
                 <Text style={s.infoText}>Poziom: {friendProfileStore.userLevel}</Text>
-                <Text style={s.infoText}>Dni pod rząd: {friendProfileStore.profile.achievements.streak.value}</Text>
+                <View/>
+                {/*<Text style={s.infoText}>Dni pod rząd: {friendProfileStore.profile.achievements.streak.value}</Text>*/}
             </View>
         </View>
 

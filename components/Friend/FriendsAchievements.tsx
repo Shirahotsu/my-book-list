@@ -41,13 +41,13 @@ const FriendsAchievements = () => {
                         description={'Oceń książki'}
                         currentValue={friendProfileStore.profile.achievements.score.value}
                         maxValue={getMaxValue('score', friendProfileStore.profile.achievements.score.level)}/>
-                    <AchievementItem
-                        level={friendProfileStore.profile.achievements.streak.level}
-                        image={`streak/streak${friendProfileStore.profile.achievements.streak.level}`}
-                        title={'Silna wola'}
-                        description={'Utrzymuj codzienną passę'}
-                        currentValue={friendProfileStore.profile.achievements.streak.value}
-                        maxValue={getMaxValue('streak', friendProfileStore.profile.achievements.streak.level)}/>
+                    {/*<AchievementItem*/}
+                    {/*    level={friendProfileStore.profile.achievements.streak.level}*/}
+                    {/*    image={`streak/streak${friendProfileStore.profile.achievements.streak.level}`}*/}
+                    {/*    title={'Silna wola'}*/}
+                    {/*    description={'Utrzymuj codzienną passę'}*/}
+                    {/*    currentValue={friendProfileStore.profile.achievements.streak.value}*/}
+                    {/*    maxValue={getMaxValue('streak', friendProfileStore.profile.achievements.streak.level)}/>*/}
                 </View>
             )}
         </Observer>

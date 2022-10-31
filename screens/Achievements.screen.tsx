@@ -64,13 +64,13 @@ const AchievementsScreen = () => {
                         description={'Oceń książki'}
                         currentValue={achievementsStore.achievements.score.value}
                         maxValue={getMaxValue('score', achievementsStore.achievements.score.level)}/>
-                    <AchievementItem
-                        level={achievementsStore.achievements.streak.level}
-                        image={`streak/streak${achievementsStore.achievements.streak.level}`}
-                        title={'Silna wola'}
-                        description={'Utrzymuj codzienną passę'}
-                        currentValue={achievementsStore.achievements.streak.value}
-                        maxValue={getMaxValue('streak', achievementsStore.achievements.streak.level)}/>
+                    {/*<AchievementItem*/}
+                    {/*    level={achievementsStore.achievements.streak.level}*/}
+                    {/*    image={`streak/streak${achievementsStore.achievements.streak.level}`}*/}
+                    {/*    title={'Silna wola'}*/}
+                    {/*    description={'Utrzymuj codzienną passę'}*/}
+                    {/*    currentValue={achievementsStore.achievements.streak.value}*/}
+                    {/*    maxValue={getMaxValue('streak', achievementsStore.achievements.streak.level)}/>*/}
                 </View>
             )}
         </Observer>

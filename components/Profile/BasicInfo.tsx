@@ -54,7 +54,8 @@ export default function BasicInfo() {
                     <View style={s.infoContainer}>
                         <Text onPress={()=>handleOnEditPress()} style={s.infoText}>{profileStore.profile.userName}</Text>
                         <Text style={s.infoText}>Poziom: {profileStore.userLevel}</Text>
-                        <Text style={s.infoText}>Dni pod rząd: {profileStore.profile.achievements.streak.value}</Text>
+                        <View/>
+                        {/*<Text style={s.infoText}>Dni pod rząd: {profileStore.profile.achievements.streak.value}</Text>*/}
                     </View>
                     <Modal ref={modalRef}>
                         <View>
